@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XXXMVV</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column; /* Direzione verticale per layout */
+      background-color: #f8f4ec;
+    }
+
+    @font-face {
+      font-family: yeezy light;
+      src: url('yeezy light.ttf'); /* Assicurati che il percorso sia corretto */
+    }
+
+    @font-face {
+      font-family: yeezy bold;
+      src: url('yeezy bold.ttf'); /* Assicurati che il percorso sia corretto */
+    }
+
+        @font-face {
+      font-family: yeezy regular;
+      src: url('yeezy regular.ttf'); /* Assicurati che il percorso sia corretto */
+    }
+
+    .my-jam {
+      font-family: "yeezy bold";
+      font-size: 25px;
+      position: absolute; /* Posizionamento assoluto per centrarlo */
+      top: 50%; /* Posiziona al centro della pagina */
+      left: 50%; /* Posiziona al centro della pagina */
+      transform: translate(-50%, -50%); /* Centra esattamente */
+    }
+
+    .my-jam a {
+      color: black;
+      text-decoration: none;
+      font-weight: bold; /* Rende il link in grassetto */
+      transition: color 0.3s ease; /* Aggiunge una transizione fluida al colore */
+    }
+
+    /* CSS per data, dispositivo e IP senza spazi, con spazio a sinistra */
+    #date-time, #device-info, #ip-address {
+      font-family: "yeezy light", sans-serif;
+      font-size: 18px;
+      margin: 0; /* Rimuove completamente i margini */
+      color: #333;
+      margin-left: 20px; /* Aggiungi uno spazio a sinistra */
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Informazioni in alto a sinistra senza spazi tra di loro, ma con spazio a sinistra -->
+  <div>
+    <p id="date-time"></p>
+    <p id="device-info"></p> <!-- Informazioni sul dispositivo sotto la data -->
+    <p id="ip-address"></p> <!-- Indirizzo IP sotto le informazioni sul dispositivo -->
+  </div>
+
+  <!-- Playlist centrata -->
+  <p class="my-jam">
+    <a href="https://music.apple.com/profile/chiomaoin">Playlist</a>
+  </p>
+
+  <script>
+    // Funzione per ottenere la data e l'ora attuali
+    function getDateTime() {
+      const now = new Date();
+      const dateTime = now.toLocaleString(); // Converte in formato locale
+      document.getElementById('date-time').innerText = 'Data e ora: ' + dateTime;
+    }
+
+    // Funzione per ottenere l'indirizzo IP pubblico
+    function getIpAddress() {
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('ip-address').innerText = 'Indirizzo IP: ' + data.ip;
+        })
+        .catch(error => {
+          document.getElementById('ip-address').innerText = 'Impossibile ottenere l\'indirizzo IP';
+        });
+    }
+
+    // Funzione per ottenere informazioni sul dispositivo
+    function getDeviceInfo() {
+      const platform = navigator.platform; // Ottiene il sistema operativo
+      let deviceInfo = 'Sistema operativo: ' + platform;
+
+      // Puoi anche aggiungere altre informazioni come il browser
+      const userAgent = navigator.userAgent;
+      if (userAgent.includes("Windows")) {
+        deviceInfo += ' (Windows)';
+      } else if (userAgent.includes("Mac")) {
+        deviceInfo += ' (Mac OS)';
+      } else if (userAgent.includes("Linux")) {
+        deviceInfo += ' (Linux)';
+      } else if (userAgent.includes("Android")) {
+        deviceInfo += ' (Android)';
+      } else if (userAgent.includes("iPhone")) {
+        deviceInfo += ' (iOS)';
+      }
+
+      document.getElementById('device-info').innerText = deviceInfo;
+    }
+
+    // Funzione per aggiornare la data ogni secondo
+    function updateDateTime() {
+      getDateTime();  // Aggiorna data e ora
+      setTimeout(updateDateTime, 1000); // Chiama la funzione ogni secondo
+    }
+
+    // Chiamare le funzioni
+    updateDateTime();  // Avvia l'aggiornamento continuo
+    getIpAddress();  // Ottieni l'indirizzo IP una volta
+    getDeviceInfo();  // Ottieni informazioni sul dispositivo
+  </script>
+</body>
+</html>
