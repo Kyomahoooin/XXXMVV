@@ -9,61 +9,77 @@
       height: 100%;
       margin: 0;
       display: flex;
-      flex-direction: column; /* Direzione verticale per layout */
+      flex-direction: column;
       background-color: #f8f4ec;
     }
 
     @font-face {
       font-family: yeezy light;
-      src: url('yeezy light.ttf'); /* Assicurati che il percorso sia corretto */
+      src: url('yeezy light.ttf');
     }
 
     @font-face {
       font-family: yeezy bold;
-      src: url('yeezy bold.ttf'); /* Assicurati che il percorso sia corretto */
-    }
-
-        @font-face {
-      font-family: yeezy regular;
-      src: url('yeezy regular.ttf'); /* Assicurati che il percorso sia corretto */
+      src: url('yeezy bold.ttf');
     }
 
     .my-jam {
       font-family: "yeezy bold";
       font-size: 25px;
-      position: absolute; /* Posizionamento assoluto per centrarlo */
-      top: 50%; /* Posiziona al centro della pagina */
-      left: 50%; /* Posiziona al centro della pagina */
-      transform: translate(-50%, -50%); /* Centra esattamente */
+      padding: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: inline-block; /* Imposta il display su inline-block */
     }
 
     .my-jam a {
-      color: black;
+      color: black; /* Cambia il colore del link */
       text-decoration: none;
-      font-weight: bold; /* Rende il link in grassetto */
-      transition: color 0.3s ease; /* Aggiunge una transizione fluida al colore */
+      font-weight: bold;
+      position: relative;
+      transition: color 0.3s ease;
     }
 
-    /* CSS per data, dispositivo e IP senza spazi, con spazio a sinistra */
+    .my-jam a:hover {
+      color: #ff6347;
+    }
+
+    /* Effetto hover con la scritta sulla stessa linea, sotto il link */
+    .my-jam a:hover::after {
+      content: "Hover effect attivato!"; /* Testo da mostrare */
+      position: absolute;
+      left: 100%; /* Posiziona la scritta alla destra del link */
+      top: 50%; /* Posiziona la scritta sulla stessa linea, sotto il link */
+      transform: translateY(50%); /* Muove la scritta un po' più in basso per posizionarla sotto */
+      font-size: 16px;
+      color: #ff6347;
+      font-family: "yeezy light", sans-serif;
+      margin-left: 10px;
+      display: inline-block;
+    }
+
+    /* CSS per i valori, senza etichette */
     #date-time, #device-info, #ip-address {
       font-family: "yeezy light", sans-serif;
       font-size: 18px;
-      margin: 0; /* Rimuove completamente i margini */
+      margin: 0;
       color: #333;
-      margin-left: 20px; /* Aggiungi uno spazio a sinistra */
+      margin-left: 20px;
     }
 
   </style>
 </head>
 <body>
-  <!-- Informazioni in alto a sinistra senza spazi tra di loro, ma con spazio a sinistra -->
+  <!-- Valori senza etichette -->
   <div>
     <p id="date-time"></p>
-    <p id="device-info"></p> <!-- Informazioni sul dispositivo sotto la data -->
-    <p id="ip-address"></p> <!-- Indirizzo IP sotto le informazioni sul dispositivo -->
+    <p id="device-info"></p>
+    <p id="ip-address"></p>
   </div>
 
-  <!-- Playlist centrata -->
+  <!-- Playlist centrata senza rettangolo -->
   <p class="my-jam">
     <a href="https://music.apple.com/profile/chiomaoin">Playlist</a>
   </p>
@@ -73,7 +89,7 @@
     function getDateTime() {
       const now = new Date();
       const dateTime = now.toLocaleString(); // Converte in formato locale
-      document.getElementById('date-time').innerText = 'Data e ora: ' + dateTime;
+      document.getElementById('date-time').innerText = dateTime; // Mostra solo il valore
     }
 
     // Funzione per ottenere l'indirizzo IP pubblico
@@ -81,7 +97,7 @@
       fetch('https://api.ipify.org?format=json')
         .then(response => response.json())
         .then(data => {
-          document.getElementById('ip-address').innerText = 'Indirizzo IP: ' + data.ip;
+          document.getElementById('ip-address').innerText = data.ip; // Mostra solo il valore
         })
         .catch(error => {
           document.getElementById('ip-address').innerText = 'Impossibile ottenere l\'indirizzo IP';
@@ -91,9 +107,7 @@
     // Funzione per ottenere informazioni sul dispositivo
     function getDeviceInfo() {
       const platform = navigator.platform; // Ottiene il sistema operativo
-      let deviceInfo = 'Sistema operativo: ' + platform;
-
-      // Puoi anche aggiungere altre informazioni come il browser
+      let deviceInfo = platform; // Mostra solo il valore
       const userAgent = navigator.userAgent;
       if (userAgent.includes("Windows")) {
         deviceInfo += ' (Windows)';
@@ -106,8 +120,7 @@
       } else if (userAgent.includes("iPhone")) {
         deviceInfo += ' (iOS)';
       }
-
-      document.getElementById('device-info').innerText = deviceInfo;
+      document.getElementById('device-info').innerText = deviceInfo; // Mostra solo il valore
     }
 
     // Funzione per aggiornare la data ogni secondo
