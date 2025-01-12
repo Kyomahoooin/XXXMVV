@@ -10,7 +10,10 @@
       margin: 0;
       display: flex;
       flex-direction: column;
+      justify-content: center; /* Centra verticalmente */
+      align-items: center; /* Centra orizzontalmente */
       background-color: #f8f4ec;
+      position: relative;
     }
 
     @font-face {
@@ -23,119 +26,70 @@
       src: url('yeezy bold.ttf');
     }
 
+    @font-face {
+      font-family: hand;
+      src: url('kanyehand.ttf');
+    }
+
     .my-jam {
-      font-family: "yeezy bold";
-      font-size: 25px;
+      font-family: "hand";
+      font-size: 50px;
       padding: 10px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: inline-block; /* Imposta il display su inline-block */
+      text-align: center;
     }
 
     .my-jam a {
-      color: black; /* Cambia il colore del link */
+      color: black;
       text-decoration: none;
       font-weight: bold;
       position: relative;
       transition: color 0.3s ease;
     }
 
-    .my-jam a:hover {
-      color: #333;
+    .playlist {
+      font-family: "hand";
+      font-size: 50px;
+      padding: 10px;
+      text-align: center;
+      margin-top: 20px;
     }
 
-    /* Effetto hover con la scritta sulla stessa linea, sotto il link */
-    .my-jam a:hover::after {
-      content: "I hate naggers people!"; /* Testo da mostrare */
-      position: absolute;
-      left: 100%; /* Posiziona la scritta alla destra del link */
-      top: 50%; /* Posiziona la scritta sulla stessa linea, sotto il link */
-      transform: translateY(50%); /* Muove la scritta un po' più in basso per posizionarla sotto */
-      font-size: 16px;
-      color: #333;
-      font-family: "yeezy light", sans-serif;
-      margin-left: 10px;
-      display: inline-block;
+    .playlist a {
+      color: black;
+      text-decoration: none;
+      font-weight: bold;
+      position: relative;
+      transition: color 0.3s ease;
     }
 
-    /* CSS per i valori, senza etichette */
-    #date-time, #device-info, #ip-address {
-      font-family: "yeezy light", sans-serif;
-      font-size: 18px;
-      margin: 0;
-      color: #333;
-      margin-left: 20px;
-
-    #date-time, #device-info, #ip-address {
-       margin-top: 20px;
+    /* Posizionamento fisso per Luca Dante in basso a sinistra */
+    .luca-dante {
+      position: fixed;
+      bottom: 15px;
+      left: 30px;
+      font-family: "yeezy light";
+      font-size: 3vw; /* Usa la larghezza del viewport per il font responsivo */
+      color: black;
     }
-
   </style>
 </head>
 <body>
-  <!-- Valori senza etichette -->
   <div>
     <p id="date-time"></p>
     <p id="device-info"></p>
     <p id="ip-address"></p>
   </div>
 
-  <!-- Playlist centrata senza rettangolo -->
   <p class="my-jam">
+    <a href="https://steamcommunity.com/profiles/76561199396357317/">Steam</a>
+  </p>
+
+  <p class="playlist">
     <a href="https://music.apple.com/profile/chiomaoin">Playlist</a>
   </p>
 
-  <script>
-    // Funzione per ottenere la data e l'ora attuali
-    function getDateTime() {
-      const now = new Date();
-      const dateTime = now.toLocaleString(); // Converte in formato locale
-      document.getElementById('date-time').innerText = dateTime; // Mostra solo il valore
-    }
+  <!-- Luca Dante fissato in basso a sinistra per tutti i dispositivi -->
+  <p class="luca-dante">© 2025 L. Dante</p>
 
-    // Funzione per ottenere l'indirizzo IP pubblico
-    function getIpAddress() {
-      fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('ip-address').innerText = data.ip; // Mostra solo il valore
-        })
-        .catch(error => {
-          document.getElementById('ip-address').innerText = 'Impossibile ottenere l\'indirizzo IP';
-        });
-    }
-
-    // Funzione per ottenere informazioni sul dispositivo
-    function getDeviceInfo() {
-      const platform = navigator.platform; // Ottiene il sistema operativo
-      let deviceInfo = platform; // Mostra solo il valore
-      const userAgent = navigator.userAgent;
-      if (userAgent.includes("Windows")) {
-        deviceInfo += ' (Windows)';
-      } else if (userAgent.includes("Mac")) {
-        deviceInfo += ' (Mac OS)';
-      } else if (userAgent.includes("Linux")) {
-        deviceInfo += ' (Linux)';
-      } else if (userAgent.includes("Android")) {
-        deviceInfo += ' (Android)';
-      } else if (userAgent.includes("iPhone")) {
-        deviceInfo += ' (iOS)';
-      }
-      document.getElementById('device-info').innerText = deviceInfo; // Mostra solo il valore
-    }
-
-    // Funzione per aggiornare la data ogni secondo
-    function updateDateTime() {
-      getDateTime();  // Aggiorna data e ora
-      setTimeout(updateDateTime, 1000); // Chiama la funzione ogni secondo
-    }
-
-    // Chiamare le funzioni
-    updateDateTime();  // Avvia l'aggiornamento continuo
-    getIpAddress();  // Ottieni l'indirizzo IP una volta
-    getDeviceInfo();  // Ottieni informazioni sul dispositivo
-  </script>
 </body>
 </html>
