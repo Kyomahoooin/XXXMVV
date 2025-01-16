@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>XXXMVV</title>
   <style>
     html, body {
@@ -12,7 +12,7 @@
       flex-direction: column;
       justify-content: center; /* Centra verticalmente */
       align-items: center; /* Centra orizzontalmente */
-      background-color: #f8f4ec;
+      background-color: #000000;
       position: relative;
     }
 
@@ -31,19 +31,19 @@
       src: url('kanyehand.ttf');
     }
 
-    .my-jam {
-      font-family: "hand";
-      font-size: 50px;
-      padding: 10px;
-      text-align: center;
+    @font-face {
+      font-family: payday;
+      src: url('payday.ttf');
     }
 
-    .my-jam a {
-      color: black;
-      text-decoration: none;
-      font-weight: bold;
-      position: relative;
-      transition: color 0.3s ease;
+    .my-jam img {
+      width: 250px; /* Regola la larghezza dell'immagine */
+      height: auto; /* Mantieni le proporzioni */
+      transition: transform 0.3s ease; /* Effetto hover */
+    }
+
+    .my-jam img:hover {
+      transform: scale(1.1); /* Ingrandisce leggermente l'immagine al passaggio del mouse */
     }
 
     .playlist {
@@ -52,30 +52,33 @@
       padding: 10px;
       text-align: center;
       margin-top: 20px;
+      transition: transform 0.3s ease; /* Transizione fluida */
+    }
+
+    .playlist:hover {
+      transform: scale(1.1); /* Ingrandisce leggermente il testo al passaggio del mouse */
     }
 
     .playlist a {
-      color: black;
+      color: #43e744;
       text-decoration: none;
       font-weight: bold;
       position: relative;
       transition: color 0.3s ease;
     }
+
   </style>
 </head>
 <body>
-  <div>
-    <p id="date-time"></p>
-    <p id="device-info"></p>
-    <p id="ip-address"></p>
-  </div>
 
   <p class="my-jam">
-    <a href="https://steamcommunity.com/profiles/76561199396357317/">Steam</a>
+    <a href="https://steamcommunity.com/profiles/76561199396357317/">
+      <img src="b4sojgk8rrbb1.png" alt="Steam">
+    </a>
   </p>
 
   <p class="playlist">
-    <a href="https://music.apple.com/profile/chiomaoin">Playlist</a>
+    <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">Playlist</a>
   </p>
 
 </body>
