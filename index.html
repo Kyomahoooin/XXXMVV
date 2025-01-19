@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>chiomaoin</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Centra verticalmente */
+      align-items: center; /* Centra orizzontalmente */
+      background-color: #000000;
+      position: relative;
+    }
+
+    @font-face {
+      font-family: yeezy light;
+      src: url('yeezy light.ttf');
+    }
+
+    @font-face {
+      font-family: yeezy bold;
+      src: url('yeezy bold.ttf');
+    }
+
+    @font-face {
+      font-family: hand;
+      src: url('kanyehand.ttf');
+    }
+
+    @font-face {
+      font-family: payday;
+      src: url('payday.ttf');
+    }
+
+    img {
+      width: 170px;     /* Imposta la larghezza a 170px */
+      height: auto;     /* Mantiene le proporzioni */
+      display: block;   /* Elimina spazi indesiderati attorno all'immagine */
+      margin: 10px 0;   /* Spazio uniforme sopra e sotto ogni immagine */
+      transition: transform 0.3s ease, opacity 0.5s ease; /* Aggiunge transizioni */
+    }
+
+    .my-jam, .playlist, .rotate-continuous {
+      text-align: center;
+      margin: 0; /* Rimuove margini aggiuntivi */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; /* Centra verticalmente le immagini al loro interno */
+    }
+
+    /* Animazione di rotazione continua */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Classe per l'immagine con rotazione continua */
+    .rotate-continuous {
+      animation: spin 5s linear infinite; /* Modifica durata e tipo di animazione */
+    }
+
+    /* Effetto hover per l'ultima immagine */
+    .rotate-continuous:hover {
+      transform: rotate(360deg) translateY(-10px); /* Ruota e alza l'immagine */
+    }
+
+    /* Classe nascosta con transizione */
+    .fade-out {
+      opacity: 0;
+      pointer-events: none; /* Impedisce interazioni con elementi nascosti */
+    }
+  </style>
+  <script>
+    function delayedNavigation(event, url) {
+      event.preventDefault(); // Impedisce il caricamento immediato del link
+
+      // Seleziona le immagini superiori
+      const imagesToHide = document.querySelectorAll('.my-jam, .playlist');
+      imagesToHide.forEach(image => {
+        image.classList.add('fade-out'); // Aggiunge la classe per farle scomparire
+      });
+
+      // Ritarda la navigazione
+      setTimeout(() => {
+        if (url) {
+          window.location.href = url;
+        }
+      }, 600); // Aspetta il tempo necessario per l'animazione
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Immagine superiore -->
+  <p class="my-jam">
+    <a href="https://steamcommunity.com/profiles/76561199396357317/" onclick="delayedNavigation(event, this.href)">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244691/steam_iemg5r.png" alt="Steam">
+    </a>
+  </p>
+  
+  <!-- Immagine al posto di .Wav -->
+  <p class="playlist">
+    <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26" onclick="delayedNavigation(event, this.href)">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244769/50K_VINYL_MOCKUP_byns57.png" alt=".Wav">
+    </a>
+  </p>
+
+  <!-- Immagine con rotazione continua -->
+  <p class="rotate-continuous">
+    <a href="#" onclick="delayedNavigation(event, null)"> <!-- Azione quando cliccata -->
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png" alt="Playlist Image">
+    </a>
+  </p>
+
+</body>
+</html>
