@@ -10,116 +10,211 @@
       margin: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Centra verticalmente */
-      align-items: center; /* Centra orizzontalmente */
+      justify-content: center;
+      align-items: center;
       background-color: #000000;
       position: relative;
     }
 
-    @font-face {
-      font-family: yeezy light;
-      src: url('yeezy light.ttf');
-    }
-
-    @font-face {
-      font-family: yeezy bold;
-      src: url('yeezy bold.ttf');
-    }
-
-    @font-face {
-      font-family: hand;
-      src: url('kanyehand.ttf');
-    }
-
-    @font-face {
-      font-family: payday;
-      src: url('payday.ttf');
-    }
-
     img {
-      width: 170px;     /* Imposta la larghezza a 170px */
-      height: auto;     /* Mantiene le proporzioni */
-      display: block;   /* Elimina spazi indesiderati attorno all'immagine */
-      margin: 10px 0;   /* Spazio uniforme sopra e sotto ogni immagine */
-      transition: transform 0.3s ease, opacity 0.5s ease; /* Aggiunge transizioni */
+      width: 170px;
+      height: auto;
+      display: block;
+      margin: 10px 0;
     }
 
     .my-jam, .playlist, .rotate-continuous {
       text-align: center;
-      margin: 0; /* Rimuove margini aggiuntivi */
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column; /* Centra verticalmente le immagini al loro interno */
+      flex-direction: column;
     }
 
-    /* Animazione di rotazione continua */
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
+    #audio-player {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #000;
+      border-radius: 50%;
+      z-index: 10;
     }
 
-    /* Classe per l'immagine con rotazione continua */
-    .rotate-continuous {
-      animation: spin 5s linear infinite; /* Modifica durata e tipo di animazione */
-    }
-
-    /* Effetto hover per l'ultima immagine */
-    .rotate-continuous:hover {
-      transform: rotate(360deg) translateY(-10px); /* Ruota e alza l'immagine */
-    }
-
-    /* Classe nascosta con transizione */
-    .fade-out {
-      opacity: 0;
-      pointer-events: none; /* Impedisce interazioni con elementi nascosti */
+    #audio-player audio {
+      width: 170px;
     }
   </style>
+  <!-- Integrazione di GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script>
-    function delayedNavigation(event, url) {
-      event.preventDefault(); // Impedisce il caricamento immediato del link
+    document.addEventListener("DOMContentLoaded", () => {
+      let imagesHidden = false;
+      let rotationAnimation;
+      let transformedImageRotation;
 
-      // Seleziona le immagini superiori
-      const imagesToHide = document.querySelectorAll('.my-jam, .playlist');
-      imagesToHide.forEach(image => {
-        image.classList.add('fade-out'); // Aggiunge la classe per farle scomparire
+      // Animazione di ingresso per tutte le immagini
+      gsap.from("img", {
+        y: -50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.3
       });
 
-      // Ritarda la navigazione
-      setTimeout(() => {
-        if (url) {
-          window.location.href = url;
+      // Rotazione continua per l'ultima immagine
+      rotationAnimation = gsap.to(".rotate-continuous img", {
+        rotation: 360,
+        duration: 5,
+        repeat: -1,
+        ease: "linear"
+      });
+
+      // Funzione per gestire il click sull'ultima immagine
+      document.querySelector(".rotate-continuous").addEventListener("click", () => {
+        const imgElement = document.querySelector(".rotate-continuous img");
+        const audioPlayer = document.getElementById("audio-player");
+        const audioElement = document.querySelector("#audio-player audio");
+
+        if (!imagesHidden) {
+          // Nascondere le altre immagini
+          gsap.to(".my-jam", {
+            x: -300,
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out"
+          });
+
+          gsap.to(".playlist", {
+            x: 300,
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out"
+          });
+
+          // Continuare a ruotare e trasformare durante la dissolvenza
+          gsap.to(imgElement, {
+            opacity: 0,
+            duration: 1,
+            onComplete: () => {
+              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737311135/CD13-375x375-1_lpuvkr.png";
+
+              // Ferma la rotazione e resetta
+              rotationAnimation.pause();
+              gsap.fromTo(imgElement, { rotation: 0, opacity: 0 }, { opacity: 1, duration: 1 });
+
+              // Mostra il lettore audio con animazione sincronizzata
+              audioPlayer.style.display = "block";
+              gsap.fromTo(audioPlayer, 
+                { opacity: 0, scale: 0, rotation: -180 },
+                { opacity: 1, scale: 1, rotation: 0, duration: 1, ease: "back.out(1.7)" }
+              );
+            }
+          });
+        } else {
+          // Ferma l'audio e nascondi il lettore
+          audioElement.pause();
+          audioElement.currentTime = 0; // Reset dell'audio
+
+          gsap.to(audioPlayer, {
+            opacity: 0,
+            scale: 0,
+            rotation: -180,
+            duration: 0.5,
+            ease: "back.in(1.7)",
+            onComplete: () => {
+              audioPlayer.style.display = "none";
+            }
+          });
+
+          gsap.to(imgElement, {
+            opacity: 0,
+            duration: 1,
+            onComplete: () => {
+              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png";
+
+              // Riprendi la rotazione
+              rotationAnimation = gsap.to(imgElement, {
+                rotation: 360,
+                duration: 5,
+                repeat: -1,
+                ease: "linear"
+              });
+
+              gsap.fromTo(imgElement, { opacity: 0 }, { opacity: 1, duration: 1 });
+
+              // Ritorno delle altre immagini
+              gsap.to(".my-jam", {
+                x: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power2.inOut"
+              });
+
+              gsap.to(".playlist", {
+                x: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power2.inOut"
+              });
+            }
+          });
         }
-      }, 600); // Aspetta il tempo necessario per l'animazione
-    }
+
+        imagesHidden = !imagesHidden; // Alterna lo stato delle immagini
+      });
+
+      // Gestisci la rotazione continua dell'immagine trasformata in base al lettore audio
+      const audioElement = document.querySelector("#audio-player audio");
+      audioElement.addEventListener("play", () => {
+        const transformedImg = document.querySelector(".rotate-continuous img");
+        transformedImageRotation = gsap.to(transformedImg, {
+          rotation: 360,
+          duration: 5,
+          repeat: -1,
+          ease: "linear"
+        });
+      });
+
+      audioElement.addEventListener("pause", () => {
+        if (transformedImageRotation) {
+          transformedImageRotation.pause();
+        }
+      });
+    });
   </script>
 </head>
 <body>
 
   <!-- Immagine superiore -->
   <p class="my-jam">
-    <a href="https://steamcommunity.com/profiles/76561199396357317/" onclick="delayedNavigation(event, this.href)">
+    <a href="https://steamcommunity.com/profiles/76561199396357317/">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244691/steam_iemg5r.png" alt="Steam">
     </a>
   </p>
   
   <!-- Immagine al posto di .Wav -->
   <p class="playlist">
-    <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26" onclick="delayedNavigation(event, this.href)">
+    <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244769/50K_VINYL_MOCKUP_byns57.png" alt=".Wav">
     </a>
   </p>
 
   <!-- Immagine con rotazione continua -->
   <p class="rotate-continuous">
-    <a href="#" onclick="delayedNavigation(event, null)"> <!-- Azione quando cliccata -->
+    <a href="#">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png" alt="Playlist Image">
     </a>
   </p>
+
+  <!-- Lettore audio -->
+  <div id="audio-player">
+    <audio controls>
+      <source src="https://res.cloudinary.com/dfbo3wljq/video/upload/v1737290250/PLAY_THIS_owbyag.mp3" type="audio/mpeg">
+      Il tuo browser non supporta il lettore audio.
+    </audio>
+  </div>
 
 </body>
 </html>
