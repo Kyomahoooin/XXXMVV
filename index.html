@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>chiomaoin</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
     html, body {
       height: 100%;
@@ -14,6 +15,7 @@
       align-items: center;
       background-color: #000000;
       position: relative;
+      font-family: Arial, sans-serif;
     }
 
     img {
@@ -25,37 +27,100 @@
 
     .my-jam, .playlist, .rotate-continuous {
       text-align: center;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+      margin: 0 0 20px;
     }
 
-    #audio-player {
+    #audio-player-container {
       display: none;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: #000;
-      border-radius: 50%;
-      z-index: 10;
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      color: #fff;
+      width: 90%;
+      max-width: 400px;
     }
 
-    #audio-player audio {
-      width: 170px;
+    #track-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    #track-artist {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #bbb;
+    }
+
+    #progress-bar-container {
+      width: 100%;
+      height: 5px;
+      background-color: #444;
+      position: relative;
+      border-radius: 5px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background-color: #1db954;
+      width: 0%;
+      border-radius: 5px;
+    }
+
+    #time-display {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    #playlist-controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    #playlist-controls button {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 15px;
+      margin: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+
+    #playlist-controls button:hover {
+      background-color: #666;
+    }
+
+    #playlist-controls i {
+      pointer-events: none;
+    }
+
+    .rotate-continuous img {
+      cursor: pointer;
     }
   </style>
-  <!-- Integrazione di GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       let imagesHidden = false;
       let rotationAnimation;
-      let transformedImageRotation;
+      let isAnimating = false;
 
-      // Animazione di ingresso per tutte le immagini
       gsap.from("img", {
         y: -50,
         opacity: 0,
@@ -63,7 +128,6 @@
         stagger: 0.3
       });
 
-      // Rotazione continua per l'ultima immagine
       rotationAnimation = gsap.to(".rotate-continuous img", {
         rotation: 360,
         duration: 5,
@@ -71,60 +135,118 @@
         ease: "linear"
       });
 
-      // Funzione per gestire il click sull'ultima immagine
+      const playlist = [
+        { title: "Beaver Creek", artist: "Aso, Middle School, Aviino", src: "https://res.cloudinary.com/dfbo3wljq/video/upload/v1737290250/PLAY_THIS_owbyag.mp3" },
+        { title: "Second Track", artist: "Artist Two", src: "audio2.mp3" },
+        { title: "Third Track", artist: "Artist Three", src: "audio3.mp3" }
+      ];
+      let currentTrackIndex = 0;
+
+      const audioPlayer = new Audio();
+      const playBtn = document.getElementById("play-btn");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      const progressBarContainer = document.getElementById("progress-bar-container");
+      const progressBar = document.getElementById("progress-bar");
+      const currentTimeEl = document.getElementById("current-time");
+      const totalDurationEl = document.getElementById("total-duration");
+      const trackTitle = document.getElementById("track-title");
+      const trackArtist = document.getElementById("track-artist");
+
+      const loadTrack = (index) => {
+        const track = playlist[index];
+        trackTitle.textContent = track.title;
+        trackArtist.textContent = track.artist;
+        audioPlayer.src = track.src;
+        audioPlayer.load();
+        updateProgress();
+      };
+
+      const updateProgress = () => {
+        const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+        totalDurationEl.textContent = formatTime(audioPlayer.duration || 0);
+      };
+
+      const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+      };
+
+      const seek = (e) => {
+        const width = progressBarContainer.clientWidth;
+        const clickX = e.offsetX;
+        audioPlayer.currentTime = (clickX / width) * audioPlayer.duration;
+      };
+
+      playBtn.addEventListener("click", () => {
+        if (audioPlayer.paused) {
+          audioPlayer.play();
+          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+          audioPlayer.pause();
+          playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+        loadTrack(currentTrackIndex);
+        audioPlayer.play();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+        loadTrack(currentTrackIndex);
+        audioPlayer.play();
+      });
+
+      audioPlayer.addEventListener("timeupdate", updateProgress);
+      progressBarContainer.addEventListener("click", seek);
+
       document.querySelector(".rotate-continuous").addEventListener("click", () => {
+        if (isAnimating) return;
+
+        isAnimating = true;
+
         const imgElement = document.querySelector(".rotate-continuous img");
-        const audioPlayer = document.getElementById("audio-player");
-        const audioElement = document.querySelector("#audio-player audio");
+        const audioPlayerContainer = document.getElementById("audio-player-container");
 
         if (!imagesHidden) {
-          // Nascondere le altre immagini
-          gsap.to(".my-jam", {
-            x: -300,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.out"
-          });
+          gsap.to(".my-jam", { x: -300, opacity: 0, duration: 1, ease: "power2.out" });
+          gsap.to(".playlist", { x: 300, opacity: 0, duration: 1, ease: "power2.out" });
 
-          gsap.to(".playlist", {
-            x: 300,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.out"
-          });
-
-          // Continuare a ruotare e trasformare durante la dissolvenza
           gsap.to(imgElement, {
             opacity: 0,
             duration: 1,
             onComplete: () => {
-              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737311135/CD13-375x375-1_lpuvkr.png";
-
-              // Ferma la rotazione e resetta
+              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737310045/MASSIVE-CD-MOCKUP_enpzxh.png";
               rotationAnimation.pause();
               gsap.fromTo(imgElement, { rotation: 0, opacity: 0 }, { opacity: 1, duration: 1 });
 
-              // Mostra il lettore audio con animazione sincronizzata
-              audioPlayer.style.display = "block";
-              gsap.fromTo(audioPlayer, 
-                { opacity: 0, scale: 0, rotation: -180 },
-                { opacity: 1, scale: 1, rotation: 0, duration: 1, ease: "back.out(1.7)" }
-              );
+              audioPlayerContainer.style.display = "block";
+              gsap.fromTo(audioPlayerContainer, { opacity: 0, scale: 0 }, {
+                opacity: 1,
+                scale: 1,
+                duration: 1,
+                ease: "back.out(1.7)",
+                onComplete: () => {
+                  isAnimating = false;
+                  loadTrack(currentTrackIndex);
+                }
+              });
             }
           });
         } else {
-          // Ferma l'audio e nascondi il lettore
-          audioElement.pause();
-          audioElement.currentTime = 0; // Reset dell'audio
-
-          gsap.to(audioPlayer, {
+          gsap.to(audioPlayerContainer, {
             opacity: 0,
             scale: 0,
-            rotation: -180,
             duration: 0.5,
             ease: "back.in(1.7)",
             onComplete: () => {
-              audioPlayer.style.display = "none";
+              audioPlayerContainer.style.display = "none";
             }
           });
 
@@ -133,8 +255,6 @@
             duration: 1,
             onComplete: () => {
               imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png";
-
-              // Riprendi la rotazione
               rotationAnimation = gsap.to(imgElement, {
                 rotation: 360,
                 duration: 5,
@@ -142,79 +262,52 @@
                 ease: "linear"
               });
 
-              gsap.fromTo(imgElement, { opacity: 0 }, { opacity: 1, duration: 1 });
-
-              // Ritorno delle altre immagini
-              gsap.to(".my-jam", {
-                x: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power2.inOut"
-              });
-
-              gsap.to(".playlist", {
-                x: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power2.inOut"
-              });
+              gsap.fromTo(imgElement, { opacity: 0 }, { opacity: 1, duration: 1, onComplete: () => { isAnimating = false; } });
+              gsap.to(".my-jam", { x: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+              gsap.to(".playlist", { x: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
             }
           });
         }
 
-        imagesHidden = !imagesHidden; // Alterna lo stato delle immagini
-      });
-
-      // Gestisci la rotazione continua dell'immagine trasformata in base al lettore audio
-      const audioElement = document.querySelector("#audio-player audio");
-      audioElement.addEventListener("play", () => {
-        const transformedImg = document.querySelector(".rotate-continuous img");
-        transformedImageRotation = gsap.to(transformedImg, {
-          rotation: 360,
-          duration: 5,
-          repeat: -1,
-          ease: "linear"
-        });
-      });
-
-      audioElement.addEventListener("pause", () => {
-        if (transformedImageRotation) {
-          transformedImageRotation.pause();
-        }
+        imagesHidden = !imagesHidden;
       });
     });
   </script>
 </head>
 <body>
-
-  <!-- Immagine superiore -->
   <p class="my-jam">
     <a href="https://steamcommunity.com/profiles/76561199396357317/">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244691/steam_iemg5r.png" alt="Steam">
     </a>
   </p>
-  
-  <!-- Immagine al posto di .Wav -->
+
   <p class="playlist">
     <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244769/50K_VINYL_MOCKUP_byns57.png" alt=".Wav">
     </a>
   </p>
 
-  <!-- Immagine con rotazione continua -->
   <p class="rotate-continuous">
     <a href="#">
       <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png" alt="Playlist Image">
     </a>
   </p>
 
-  <!-- Lettore audio -->
-  <div id="audio-player">
-    <audio controls>
-      <source src="https://res.cloudinary.com/dfbo3wljq/video/upload/v1737290250/PLAY_THIS_owbyag.mp3" type="audio/mpeg">
-      Il tuo browser non supporta il lettore audio.
-    </audio>
+  <div id="audio-player-container">
+    <div id="track-title">Beaver Creek</div>
+    <div id="track-artist">Aso, Middle School, Aviino</div>
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="time-display">
+      <span id="current-time">0:00</span>
+      <span id="total-duration">0:00</span>
+    </div>
+    <div id="playlist-controls">
+      <button id="prev-btn"><i class="fas fa-backward"></i></button>
+      <button id="play-btn"><i class="fas fa-play"></i></button>
+      <button id="next-btn"><i class="fas fa-forward"></i></button>
+    </div>
   </div>
-
 </body>
 </html>
