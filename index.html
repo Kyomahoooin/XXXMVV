@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>chiomaoin</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
-    html, body {
+    html,
+    body {
       height: 100%;
       margin: 0;
       display: flex;
@@ -16,6 +18,11 @@
       background-color: #000000;
       position: relative;
       font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    body.animating {
+      overflow: visible;
     }
 
     img {
@@ -25,25 +32,37 @@
       margin: 10px 0;
     }
 
-    .my-jam, .playlist, .rotate-continuous {
+    .my-jam,
+    .playlist,
+    .rotate-continuous {
       text-align: center;
       margin: 0 0 20px;
     }
 
     #audio-player-container {
       display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
       text-align: center;
       color: #fff;
       width: 90%;
       max-width: 400px;
+      padding: 20px;
+      height: auto;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+    }
+
+    #audio-player-container img {
+      width: 250px;
+      height: auto;
+      margin-bottom: 20px;
     }
 
     #track-title {
@@ -58,14 +77,25 @@
       color: #bbb;
     }
 
-    #progress-bar-container {
+    #progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       width: 100%;
-      height: 5px;
-      background-color: #444;
-      position: relative;
-      border-radius: 5px;
+      max-width: 350px;
       margin: 10px 0;
+      position: relative;
+    }
+
+    #progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background-color: #444;
+      border-radius: 5px;
+      position: relative;
+      margin: 0 10px;
       cursor: pointer;
+      overflow: hidden;
     }
 
     #progress-bar {
@@ -73,45 +103,70 @@
       background-color: #1db954;
       width: 0%;
       border-radius: 5px;
+      transition: width 0.1s ease-in-out;
     }
 
-    #time-display {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
+    #current-time,
+    #total-duration {
       font-size: 12px;
       color: #bbb;
+      margin: 0;
+      padding: 0 5px;
+      z-index: 1;
     }
 
     #playlist-controls {
-      margin-top: 10px;
+      margin-top: 20px;
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
     }
 
     #playlist-controls button {
-      background-color: #444;
+      background-color: transparent;
       color: #fff;
       border: none;
-      padding: 15px;
-      margin: 0;
-      border-radius: 50%;
       cursor: pointer;
       font-size: 18px;
-      transition: background-color 0.3s;
     }
 
-    #playlist-controls button:hover {
-      background-color: #666;
+    #playlist-controls button:focus {
+      outline: none;
     }
 
-    #playlist-controls i {
+    #playlist-controls button i {
       pointer-events: none;
     }
 
     .rotate-continuous img {
+      max-width: 100%;
+      height: auto;
       cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      html,
+      body {
+        overflow: hidden;
+      }
+
+      #audio-player-container {
+        width: 95%;
+        max-width: none;
+        padding: 15px;
+      }
+
+      #progress-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #progress-bar-container {
+        flex: 1;
+        width: 100%;
+        margin: 0 10px;
+      }
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -120,6 +175,16 @@
       let imagesHidden = false;
       let rotationAnimation;
       let isAnimating = false;
+      let isDragging = false;
+      const audioElement = document.getElementById("audio-element");
+      const playBtn = document.getElementById("play-btn");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      const progressBarContainer = document.getElementById("progress-bar-container");
+      const progressBar = document.getElementById("progress-bar");
+      const currentTimeDisplay = document.getElementById("current-time");
+      const totalDurationDisplay = document.getElementById("total-duration");
+      const rotatingImage = document.querySelector("#audio-player-container img");
 
       gsap.from("img", {
         y: -50,
@@ -130,81 +195,10 @@
 
       rotationAnimation = gsap.to(".rotate-continuous img", {
         rotation: 360,
-        duration: 5,
+        duration: 8, // Diminuire la velocità di rotazione da 6 a 8 secondi
         repeat: -1,
         ease: "linear"
       });
-
-      const playlist = [
-        { title: "Beaver Creek", artist: "Aso, Middle School, Aviino", src: "https://res.cloudinary.com/dfbo3wljq/video/upload/v1737290250/PLAY_THIS_owbyag.mp3" },
-        { title: "Second Track", artist: "Artist Two", src: "audio2.mp3" },
-        { title: "Third Track", artist: "Artist Three", src: "audio3.mp3" }
-      ];
-      let currentTrackIndex = 0;
-
-      const audioPlayer = new Audio();
-      const playBtn = document.getElementById("play-btn");
-      const prevBtn = document.getElementById("prev-btn");
-      const nextBtn = document.getElementById("next-btn");
-      const progressBarContainer = document.getElementById("progress-bar-container");
-      const progressBar = document.getElementById("progress-bar");
-      const currentTimeEl = document.getElementById("current-time");
-      const totalDurationEl = document.getElementById("total-duration");
-      const trackTitle = document.getElementById("track-title");
-      const trackArtist = document.getElementById("track-artist");
-
-      const loadTrack = (index) => {
-        const track = playlist[index];
-        trackTitle.textContent = track.title;
-        trackArtist.textContent = track.artist;
-        audioPlayer.src = track.src;
-        audioPlayer.load();
-        updateProgress();
-      };
-
-      const updateProgress = () => {
-        const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        progressBar.style.width = `${progressPercent}%`;
-        currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-        totalDurationEl.textContent = formatTime(audioPlayer.duration || 0);
-      };
-
-      const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60);
-        return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
-      };
-
-      const seek = (e) => {
-        const width = progressBarContainer.clientWidth;
-        const clickX = e.offsetX;
-        audioPlayer.currentTime = (clickX / width) * audioPlayer.duration;
-      };
-
-      playBtn.addEventListener("click", () => {
-        if (audioPlayer.paused) {
-          audioPlayer.play();
-          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        } else {
-          audioPlayer.pause();
-          playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-      });
-
-      prevBtn.addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audioPlayer.play();
-      });
-
-      nextBtn.addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audioPlayer.play();
-      });
-
-      audioPlayer.addEventListener("timeupdate", updateProgress);
-      progressBarContainer.addEventListener("click", seek);
 
       document.querySelector(".rotate-continuous").addEventListener("click", () => {
         if (isAnimating) return;
@@ -214,6 +208,8 @@
         const imgElement = document.querySelector(".rotate-continuous img");
         const audioPlayerContainer = document.getElementById("audio-player-container");
 
+        document.body.classList.add("animating");
+
         if (!imagesHidden) {
           gsap.to(".my-jam", { x: -300, opacity: 0, duration: 1, ease: "power2.out" });
           gsap.to(".playlist", { x: 300, opacity: 0, duration: 1, ease: "power2.out" });
@@ -222,19 +218,15 @@
             opacity: 0,
             duration: 1,
             onComplete: () => {
-              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737310045/MASSIVE-CD-MOCKUP_enpzxh.png";
               rotationAnimation.pause();
-              gsap.fromTo(imgElement, { rotation: 0, opacity: 0 }, { opacity: 1, duration: 1 });
-
-              audioPlayerContainer.style.display = "block";
-              gsap.fromTo(audioPlayerContainer, { opacity: 0, scale: 0 }, {
+              audioPlayerContainer.style.display = "flex";
+              gsap.fromTo(audioPlayerContainer, { opacity: 0 }, {
                 opacity: 1,
-                scale: 1,
                 duration: 1,
-                ease: "back.out(1.7)",
+                ease: "power2.out",
                 onComplete: () => {
                   isAnimating = false;
-                  loadTrack(currentTrackIndex);
+                  document.body.classList.remove("animating");
                 }
               });
             }
@@ -242,11 +234,11 @@
         } else {
           gsap.to(audioPlayerContainer, {
             opacity: 0,
-            scale: 0,
             duration: 0.5,
-            ease: "back.in(1.7)",
+            ease: "power2.in",
             onComplete: () => {
               audioPlayerContainer.style.display = "none";
+              audioElement.pause();
             }
           });
 
@@ -254,26 +246,112 @@
             opacity: 0,
             duration: 1,
             onComplete: () => {
-              imgElement.src = "https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244690/CD13-375x375-1_vh6v1w.png";
               rotationAnimation = gsap.to(imgElement, {
                 rotation: 360,
-                duration: 5,
+                duration: 8, // Diminuire la velocità di rotazione da 6 a 8 secondi
                 repeat: -1,
                 ease: "linear"
               });
 
               gsap.fromTo(imgElement, { opacity: 0 }, { opacity: 1, duration: 1, onComplete: () => { isAnimating = false; } });
               gsap.to(".my-jam", { x: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
-              gsap.to(".playlist", { x: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+              gsap.to(".playlist", { x: 0, opacity: 1, duration: 1, ease: "power2.inOut", onComplete: () => {
+                  document.body.classList.remove("animating");
+                }
+              });
             }
           });
         }
 
         imagesHidden = !imagesHidden;
       });
+
+      audioElement.addEventListener("timeupdate", () => {
+        const currentTime = audioElement.currentTime;
+        const duration = audioElement.duration;
+        if (!isNaN(duration)) {
+          const progressPercent = (currentTime / duration) * 100;
+          progressBar.style.width = `${progressPercent}%`;
+          currentTimeDisplay.textContent = formatTime(currentTime);
+          totalDurationDisplay.textContent = formatTime(duration);
+        }
+      });
+
+      audioElement.addEventListener("ended", () => {
+        progressBar.style.width = "0%";
+        currentTimeDisplay.textContent = "0:00";
+        playBtn.innerHTML = '<i class="fas fa-play fa-2x"></i>';
+        audioElement.currentTime = 0;
+        gsap.killTweensOf(rotatingImage);
+      });
+
+      progressBarContainer.addEventListener("click", (e) => {
+        const rect = progressBarContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const duration = audioElement.duration;
+        audioElement.currentTime = (clickX / width) * duration;
+      });
+
+      progressBarContainer.addEventListener("touchstart", (e) => {
+        isDragging = true;
+        updateProgressBar(e.touches[0].clientX);
+      });
+
+      progressBarContainer.addEventListener("touchmove", (e) => {
+        if (isDragging) {
+          updateProgressBar(e.touches[0].clientX);
+        }
+      });
+
+      progressBarContainer.addEventListener("touchend", () => {
+        isDragging = false;
+      });
+
+      function updateProgressBar(clientX) {
+        const rect = progressBarContainer.getBoundingClientRect();
+        const clickX = clientX - rect.left;
+        const width = rect.width;
+        const duration = audioElement.duration;
+        if (duration && clickX >= 0 && clickX <= width) {
+          audioElement.currentTime = (clickX / width) * duration;
+        }
+      }
+
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? "0" + secs : secs}`;
+      }
+
+      playBtn.addEventListener("click", () => {
+        if (audioElement.paused) {
+          audioElement.play();
+          playBtn.innerHTML = '<i class="fas fa-pause fa-2x"></i>';
+          gsap.to(rotatingImage, {
+            rotation: "+=360",
+            duration: 8, // Diminuire leggermente la velocità durante la riproduzione manuale
+            ease: "linear",
+            repeat: -1
+          });
+        } else {
+          audioElement.pause();
+          playBtn.innerHTML = '<i class="fas fa-play fa-2x"></i>';
+          gsap.killTweensOf(rotatingImage);
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        audioElement.currentTime = Math.max(audioElement.currentTime - 10, 0);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        audioElement.currentTime = Math.min(audioElement.currentTime + 10, audioElement.duration);
+      });
     });
   </script>
 </head>
+
 <body>
   <p class="my-jam">
     <a href="https://steamcommunity.com/profiles/76561199396357317/">
@@ -294,20 +372,25 @@
   </p>
 
   <div id="audio-player-container">
-    <div id="track-title">Beaver Creek</div>
-    <div id="track-artist">Aso, Middle School, Aviino</div>
-    <div id="progress-bar-container">
-      <div id="progress-bar"></div>
-    </div>
-    <div id="time-display">
+    <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737507070/Snapinst.app_459629632_1677484156408695_3595867156451194719_n_1080_iaecnp.png" 
+         alt="Immagine sopra il lettore">
+    <div id="track-title">REDMONEY</div>
+    <div id="track-artist">Playboi Carti</div>
+    <div id="progress-container">
       <span id="current-time">0:00</span>
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+      </div>
       <span id="total-duration">0:00</span>
     </div>
     <div id="playlist-controls">
       <button id="prev-btn"><i class="fas fa-backward"></i></button>
-      <button id="play-btn"><i class="fas fa-play"></i></button>
+      <button id="play-btn"><i class="fas fa-play fa-2x"></i></button>
       <button id="next-btn"><i class="fas fa-forward"></i></button>
     </div>
+    <audio id="audio-element" src="https://res.cloudinary.com/dfbo3wljq/video/upload/v1737507298/12_-_REDM0NEY_iexxyy.wav"></audio>
   </div>
 </body>
+
 </html>
+
