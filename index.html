@@ -60,7 +60,7 @@
     }
 
     #audio-player-container img {
-      width: 250px;
+      width: 200px; /* Imposta la larghezza a 200px */
       height: auto;
       margin-bottom: 20px;
     }
@@ -195,7 +195,7 @@
 
       rotationAnimation = gsap.to(".rotate-continuous img", {
         rotation: 360,
-        duration: 8, // Diminuire la velocità di rotazione da 6 a 8 secondi
+        duration: 8,
         repeat: -1,
         ease: "linear"
       });
@@ -218,6 +218,7 @@
             opacity: 0,
             duration: 1,
             onComplete: () => {
+              imgElement.style.display = "none"; // Nascondi completamente l'immagine
               rotationAnimation.pause();
               audioPlayerContainer.style.display = "flex";
               gsap.fromTo(audioPlayerContainer, { opacity: 0 }, {
@@ -246,9 +247,10 @@
             opacity: 0,
             duration: 1,
             onComplete: () => {
+              imgElement.style.display = "block"; // Mostra di nuovo l'immagine
               rotationAnimation = gsap.to(imgElement, {
                 rotation: 360,
-                duration: 8, // Diminuire la velocità di rotazione da 6 a 8 secondi
+                duration: 8,
                 repeat: -1,
                 ease: "linear"
               });
@@ -330,7 +332,7 @@
           playBtn.innerHTML = '<i class="fas fa-pause fa-2x"></i>';
           gsap.to(rotatingImage, {
             rotation: "+=360",
-            duration: 8, // Diminuire leggermente la velocità durante la riproduzione manuale
+            duration: 8,
             ease: "linear",
             repeat: -1
           });
@@ -361,20 +363,20 @@
 
   <p class="playlist">
     <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">
-      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737244769/50K_VINYL_MOCKUP_byns57.png" alt=".Wav">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737413265/CD1_qclqod.png" alt=".Wav">
     </a>
   </p>
 
   <p class="rotate-continuous">
     <a href="#">
-      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737510331/1-283ad1dc_onglrg.png" alt="Playlist Image">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737311135/CD13-375x375-1_lpuvkr.png" alt="Playlist Image">
     </a>
   </p>
 
   <div id="audio-player-container">
     <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737507070/Snapinst.app_459629632_1677484156408695_3595867156451194719_n_1080_iaecnp.png" 
          alt="Immagine sopra il lettore">
-    <div id="track-title">REDMONEY</div>
+    <div id="track-title">REDMONEY 🅴</div>
     <div id="track-artist">Playboi Carti</div>
     <div id="progress-container">
       <span id="current-time">0:00</span>
@@ -393,4 +395,3 @@
 </body>
 
 </html>
-
