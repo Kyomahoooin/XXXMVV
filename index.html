@@ -163,6 +163,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      text-align: center;
     }
 
     .black_background {
@@ -184,6 +185,11 @@
       background-color: #fff;
       border-radius: 25px;
       animation: move 3s forwards;
+    }
+
+    .new-image {
+      width: 300px;
+      margin-top: 20px;
     }
 
     @keyframes move {
@@ -253,6 +259,18 @@
       const rotatingImage = document.querySelector(".rotate-continuous img");
       let imagesHidden = false;
       let isAnimating = false;
+
+      // Function to reset GIFs
+      const resetGif = (imgElement) => {
+        const src = imgElement.src;
+        imgElement.src = `${src}?t=${new Date().getTime()}`;
+      };
+
+      // Reset GIFs on page load
+      const logoGif = document.getElementById('logo-gif');
+      const undertaleGif = document.getElementById('undertale-gif');
+      resetGif(logoGif);
+      resetGif(undertaleGif);
 
       // Initialize rotation animation
       const rotationAnimation = gsap.to(rotatingImage, {
@@ -369,10 +387,12 @@
   <!-- New loading screen -->
   <div id="loading-screen">
     <div class="center_elements">
-      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737799849/0f720758af76485d08b0370a30f86e53_wi3twz.gif" alt="logo_apple" class="img" width="80px">
+      <img id="logo-gif" src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737800798/tenor_1_lnh1lp.gif" alt="logo_apple" class="img" width="80px">
       <div class="black_background">
         <div class="white_background"></div>
       </div>
+      <!-- New image added below the loading line -->
+      <img id="undertale-gif" src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737894032/undertale_text_box_dbejli.gif" alt="Undertale Text Box" class="new-image">
     </div>
   </div>
 
