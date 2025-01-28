@@ -39,105 +39,6 @@
       margin: 0 0 20px;
     }
 
-    #audio-player-container {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      color: #fff;
-      width: 90%;
-      max-width: 400px;
-      padding: 20px;
-      height: auto;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.9);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
-    }
-
-    #audio-player-container img {
-      width: 200px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-
-    #track-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    #track-artist {
-      font-size: 14px;
-      margin-bottom: 15px;
-      color: #bbb;
-    }
-
-    #progress-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 350px;
-      margin: 10px 0;
-      position: relative;
-    }
-
-    #progress-bar-container {
-      flex: 1;
-      height: 8px;
-      background-color: #444;
-      border-radius: 5px;
-      position: relative;
-      margin: 0 10px;
-      cursor: pointer;
-      overflow: hidden;
-    }
-
-    #progress-bar {
-      height: 100%;
-      background-color: #1db954;
-      width: 0%;
-      border-radius: 5px;
-      transition: width 0.1s ease-in-out;
-    }
-
-    #current-time,
-    #total-duration {
-      font-size: 12px;
-      color: #bbb;
-      margin: 0;
-      padding: 0 5px;
-      z-index: 1;
-    }
-
-    #playlist-controls {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    #playlist-controls button {
-      background-color: transparent;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    #playlist-controls button:focus {
-      outline: none;
-    }
-
-    #playlist-controls button i {
-      pointer-events: none;
-    }
-
     .rotate-continuous img {
       max-width: 100%;
       height: auto;
@@ -207,45 +108,11 @@
       body {
         overflow: hidden;
       }
-
-      #audio-player-container {
-        width: 95%;
-        max-width: none;
-        padding: 15px;
-      }
-
-      #progress-container {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      #progress-bar-container {
-        flex: 1;
-        width: 100%;
-        margin: 0 10px;
-      }
     }
 
     /* Hide content until the page is ready */
     #main-content {
       display: none;
-    }
-
-    /* Style for the return button */
-    #return-btn {
-      margin-top: 20px;
-      background-color: #1db954;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    #return-btn:focus {
-      outline: none;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -253,32 +120,14 @@
     document.addEventListener("DOMContentLoaded", () => {
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.getElementById('main-content');
-      const returnBtn = document.getElementById('return-btn');
-      const audioElement = document.getElementById("audio-element");
-      const playBtn = document.getElementById("play-btn");
       const rotatingImage = document.querySelector(".rotate-continuous img");
-      let imagesHidden = false;
-      let isAnimating = false;
 
-      // Function to reset GIFs
-      const resetGif = (imgElement) => {
-        const src = imgElement.src;
-        imgElement.src = `${src}?t=${new Date().getTime()}`;
-      };
-
-      // Reset GIFs on page load
-      const logoGif = document.getElementById('logo-gif');
-      const undertaleGif = document.getElementById('undertale-gif');
-      resetGif(logoGif);
-      resetGif(undertaleGif);
-
-      // Initialize rotation animation
-      const rotationAnimation = gsap.to(rotatingImage, {
+      // Increase rotation speed by reducing the duration
+      gsap.to(rotatingImage, {
         rotation: 360,
-        duration: 2,
+        duration: 4, // Adjusted duration for faster rotation
         repeat: -1,
-        ease: "linear",
-        paused: false // Ensure the animation is not paused
+        ease: "linear"
       });
 
       // Hide loading screen and show main content
@@ -297,88 +146,6 @@
           }
         });
       }, 3000);
-
-      document.querySelector(".rotate-continuous").addEventListener("click", () => {
-        if (isAnimating) return;
-        isAnimating = true;
-
-        const audioPlayerContainer = document.getElementById("audio-player-container");
-
-        if (!imagesHidden) {
-          gsap.to(".my-jam, .playlist", { opacity: 0, duration: 1 });
-          gsap.to(rotatingImage, {
-            opacity: 0,
-            duration: 1,
-            onComplete: () => {
-              audioPlayerContainer.style.display = "flex";
-              gsap.fromTo(audioPlayerContainer, { opacity: 0 }, {
-                opacity: 1,
-                duration: 1,
-                onComplete: () => {
-                  isAnimating = false;
-                }
-              });
-            }
-          });
-        } else {
-          gsap.to(audioPlayerContainer, {
-            opacity: 0,
-            duration: 0.5,
-            onComplete: () => {
-              audioPlayerContainer.style.display = "none";
-              audioElement.pause();
-            }
-          });
-
-          gsap.to(rotatingImage, {
-            opacity: 0,
-            duration: 1,
-            onComplete: () => {
-              gsap.fromTo(rotatingImage, { opacity: 0 }, { opacity: 1, duration: 1, onComplete: () => { isAnimating = false; } });
-              gsap.to(".my-jam, .playlist", { opacity: 1, duration: 1 });
-            }
-          });
-        }
-
-        imagesHidden = !imagesHidden;
-      });
-
-      returnBtn.addEventListener("click", () => {
-        if (isAnimating) return;
-        isAnimating = true;
-
-        const audioPlayerContainer = document.getElementById("audio-player-container");
-
-        gsap.to(audioPlayerContainer, {
-          opacity: 0,
-          duration: 0.5,
-          onComplete: () => {
-            audioPlayerContainer.style.display = "none";
-            audioElement.pause();
-          }
-        });
-
-        gsap.to(rotatingImage, {
-          opacity: 0,
-          duration: 1,
-          onComplete: () => {
-            gsap.fromTo(rotatingImage, { opacity: 0 }, { opacity: 1, duration: 1, onComplete: () => { isAnimating = false; } });
-            gsap.to(".my-jam, .playlist", { opacity: 1, duration: 1 });
-          }
-        });
-
-        imagesHidden = !imagesHidden;
-      });
-
-      playBtn.addEventListener("click", () => {
-        if (audioElement.paused) {
-          audioElement.play();
-          playBtn.innerHTML = '<i class="fas fa-pause fa-2x"></i>';
-        } else {
-          audioElement.pause();
-          playBtn.innerHTML = '<i class="fas fa-play fa-2x"></i>';
-        }
-      });
     });
   </script>
 </head>
@@ -387,12 +154,12 @@
   <!-- New loading screen -->
   <div id="loading-screen">
     <div class="center_elements">
-      <img id="logo-gif" src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737800798/tenor_1_lnh1lp.gif" alt="logo_apple" class="img" width="80px">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737800798/tenor_1_lnh1lp.gif" alt="logo_apple" class="img" width="80px">
       <div class="black_background">
         <div class="white_background"></div>
       </div>
       <!-- New image added below the loading line -->
-      <img id="undertale-gif" src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737894032/undertale_text_box_dbejli.gif" alt="Undertale Text Box" class="new-image">
+      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737894032/undertale_text_box_dbejli.gif" alt="Undertale Text Box" class="new-image">
     </div>
   </div>
 
@@ -400,46 +167,21 @@
   <div id="main-content">
     <p class="my-jam">
       <a href="https://steamcommunity.com/profiles/76561199396357317/">
-        <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737882841/Foldersteam_eizobv.png" alt="Steam">
+        <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1738104331/CD11-375x375-1_qgshvf.png" alt="Steam">
       </a>
     </p>
 
     <p class="playlist">
       <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">
-        <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737884058/Folderspotify_rdrumz.png" alt=".Wav">
+        <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737884405/Snapinst.app_459439159_1093274858836278_897834032096837662_n_1080_ureilj.jpg" alt=".Wav">
       </a>
     </p>
 
     <p class="rotate-continuous">
-      <a href="#">
+      <a href="https://trackerhub.cx/sh/1cZ271215_x00jygu0pVOhDhbwUxVF_hxaJU8PGgruRE">
         <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737311135/CD13-375x375-1_lpuvkr.png" alt="Playlist Image">
       </a>
     </p>
-
-    <div id="audio-player-container">
-      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737507070/Snapinst.app_459629632_1677484156408695_3595867156451194719_n_1080_iaecnp.png" 
-           alt="Immagine sopra il lettore">
-      <div id="track-title">REDMONEY 🅴</div>
-      <div id="track-artist">Playboi Carti</div>
-      <div id="progress-container">
-        <span id="current-time">0:00</span>
-        <div id="progress-bar-container">
-          <div id="progress-bar"></div>
-        </div>
-        <span id="total-duration">3:30</span>
-      </div>
-
-      <div id="playlist-controls">
-        <button id="prev-btn"><i class="fas fa-backward"></i></button>
-        <button id="play-btn"><i class="fas fa-play"></i></button>
-        <button id="next-btn"><i class="fas fa-forward"></i></button>
-      </div>
-
-      <!-- Return button -->
-      <button id="return-btn">Return</button>
-
-      <audio id="audio-element" src="https://example.com/your-audio-file.mp3"></audio>
-    </div>
   </div>
 </body>
 
