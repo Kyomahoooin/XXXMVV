@@ -44,12 +44,6 @@
       margin: 0 0 20px;
     }
 
-    .rotate-continuous img {
-      max-width: 100%;
-      height: auto;
-      cursor: pointer;
-    }
-
     /* New loading screen styles */
     #loading-screen {
       position: fixed;
@@ -202,15 +196,8 @@
     document.addEventListener("DOMContentLoaded", () => {
       const loadingScreen = document.getElementById('loading-screen');
       const mainContent = document.getElementById('main-content');
-      const rotatingImage = document.querySelector(".rotate-continuous img");
 
-      // Increase rotation speed by reducing the duration
-      gsap.to(rotatingImage, {
-        rotation: 360,
-        duration: 4, // Adjusted duration for faster rotation
-        repeat: -1,
-        ease: "linear"
-      });
+      // Remove rotation animation code
 
       // Array of GIF URLs
       const gifUrls = [
@@ -278,7 +265,7 @@
 
     <p class="rotate-continuous">
       <a href="https://trackerhub.cx/sh/1cZ271215_x00jygu0pVOhDhbwUxVF_hxaJU8PGgruRE">
-        <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737311135/CD13-375x375-1_lpuvkr.png" alt="Playlist Image">
+        <img src="https://files.catbox.moe/4brpcf.gif" alt="Playlist Image">
       </a>
     </p>
   </div>
