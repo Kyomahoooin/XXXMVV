@@ -1,274 +1,136 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>chiomaoin</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <style>
-    @font-face {
-      font-family: 'CustomFont';
-      src: url('https://files.catbox.moe/u5o8ty.otf') format('opentype');
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiomaoin.it</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: #000000;
-      position: relative;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden; /* Impedisce lo scroll */
+            pointer-events: none; /* Disabilita tutti gli eventi di interazione sul corpo */
+        }
 
-    body.animating {
-      overflow: visible;
-    }
+        .spinner {
+            position: relative;
+            width: 54px;
+            height: 54px;
+            display: inline-block;
+            background: white; /* Sfondo dello spinner bianco */
+            padding: 10px;
+            border-radius: 10px;
+            pointer-events: none; /* Disabilita interazione anche con lo spinner */
+        }
 
-    img {
-      width: 170px;
-      height: auto;
-      display: block;
-      margin: 10px 0;
-    }
+        .spinner div {
+            width: 6%;
+            height: 16%;
+            background: black; /* Colore delle barre (nero) */
+            position: absolute;
+            left: 49%;
+            top: 43%;
+            opacity: 0;
+            border-radius: 50px;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+            animation: fade 1s linear infinite;
+        }
 
-    .my-jam,
-    .playlist,
-    .rotate-continuous {
-      text-align: center;
-      margin: 0 0 20px;
-    }
+        @keyframes fade {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0.25;
+            }
+        }
 
-    /* New loading screen styles */
-    #loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      flex-direction: column;
-    }
+        .spinner .bar1 {
+            transform: rotate(0deg) translate(0, -130%);
+            animation-delay: 0s;
+        }
 
-    .center_elements {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
+        .spinner .bar2 {
+            transform: rotate(30deg) translate(0, -130%);
+            animation-delay: -0.9167s;
+        }
 
-    .black_background {
-      width: 250px;
-      height: 3px;
-      background-color: rgb(51, 51, 51);
-      margin: 50px auto 0 auto;
-      border-radius: 25px;
-    }
+        .spinner .bar3 {
+            transform: rotate(60deg) translate(0, -130%);
+            animation-delay: -0.833s;
+        }
 
-    .img {
-      display: block;
-      margin: 0 auto;
-    }
+        .spinner .bar4 {
+            transform: rotate(90deg) translate(0, -130%);
+            animation-delay: -0.7497s;
+        }
 
-    .white_background {
-      width: 0;
-      height: 3px;
-      background-color: #fff;
-      border-radius: 25px;
-      animation: move 3s forwards;
-    }
+        .spinner .bar5 {
+            transform: rotate(120deg) translate(0, -130%);
+            animation-delay: -0.667s;
+        }
 
-    .new-image {
-      width: 300px;
-      margin-top: 20px;
-    }
+        .spinner .bar6 {
+            transform: rotate(150deg) translate(0, -130%);
+            animation-delay: -0.5837s;
+        }
 
-    @keyframes move {
-      0% {
-        width: 0;
-      }
+        .spinner .bar7 {
+            transform: rotate(180deg) translate(0, -130%);
+            animation-delay: -0.5s;
+        }
 
-      100% {
-        width: 250px;
-      }
-    }
+        .spinner .bar8 {
+            transform: rotate(210deg) translate(0, -130%);
+            animation-delay: -0.4167s;
+        }
 
-    @media (max-width: 768px) {
-      html,
-      body {
-        overflow: hidden;
-      }
-    }
+        .spinner .bar9 {
+            transform: rotate(240deg) translate(0, -130%);
+            animation-delay: -0.333s;
+        }
 
-    /* Hide content until the page is ready */
-    #main-content {
-      display: none;
-    }
+        .spinner .bar10 {
+            transform: rotate(270deg) translate(0, -130%);
+            animation-delay: -0.2497s;
+        }
 
-    /* CRT effect styles */
-    .crt::before {
-      content: " ";
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      z-index: 2;
-      background-size: 100% 2px, 3px 100%;
-      pointer-events: none;
-    }
+        .spinner .bar11 {
+            transform: rotate(300deg) translate(0, -130%);
+            animation-delay: -0.167s;
+        }
 
-    @keyframes flicker {
-      0% {
-        opacity: 0.27861;
-      }
-
-      5% {
-        opacity: 0.34769;
-      }
-
-      10% {
-        opacity: 0.23604;
-      }
-
-      15% {
-        opacity: 0.10626;
-      }
-
-      20% {
-        opacity: 0.18128;
-      }
-
-      25% {
-        opacity: 0.10626;
-      }
-
-      30% {
-        opacity: 0.18128;
-      }
-
-      35% {
-        opacity: 0.23604;
-      }
-    }
-
-    .crt::after {
-      content: " ";
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      background: rgba(18, 16, 16, 0.1);
-      opacity: 0;
-      z-index: 2;
-      pointer-events: none;
-      animation: flicker 0.15s infinite;
-    }
-
-    /* Text at the bottom of the loading screen */
-    .loading-text {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;
-      color: #fff;
-      font-size: 18px;
-      z-index: 3; /* Ensure it appears above the CRT effect */
-      font-family: 'CustomFont', Arial, sans-serif;
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const loadingScreen = document.getElementById('loading-screen');
-      const mainContent = document.getElementById('main-content');
-
-      // Remove rotation animation code
-
-      // Array of GIF URLs
-      const gifUrls = [
-        'https://res.cloudinary.com/dfbo3wljq/image/upload/v1737894032/undertale_text_box_dbejli.gif',
-        'https://res.cloudinary.com/dfbo3wljq/image/upload/v1738333155/undertale_text_box_1_snzxl4.gif',
-        // Add more URLs as needed
-      ];
-
-      // Select a random GIF
-      const randomGif = gifUrls[Math.floor(Math.random() * gifUrls.length)];
-
-      // Set the random GIF as the source for the image
-      document.querySelector('.new-image').src = randomGif;
-
-      // Hide loading screen and show main content
-      setTimeout(() => {
-        gsap.to(loadingScreen, {
-          opacity: 0,
-          duration: 1,
-          onComplete: () => {
-            loadingScreen.style.display = 'none';
-            mainContent.style.display = 'block';
-            gsap.from(".my-jam, .playlist, .rotate-continuous", {
-              opacity: 0,
-              duration: 1,
-              stagger: 0.3
-            });
-          }
-        });
-      }, 3000);
-    });
-  </script>
+        .spinner .bar12 {
+            transform: rotate(330deg) translate(0, -130%);
+            animation-delay: -0.0833s;
+        }
+    </style>
 </head>
-
 <body>
-  <!-- New loading screen -->
-  <div id="loading-screen" class="crt">
-    <div class="center_elements">
-      <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1737800798/tenor_1_lnh1lp.gif" alt="logo_apple" class="img" width="80px">
-      <div class="black_background">
-        <div class="white_background"></div>
-      </div>
-      <!-- New image added below the loading line -->
-      <img src="" alt="Random GIF" class="new-image">
+    <div class="spinner">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+        <div class="bar4"></div>
+        <div class="bar5"></div>
+        <div class="bar6"></div>
+        <div class="bar7"></div>
+        <div class="bar8"></div>
+        <div class="bar9"></div>
+        <div class="bar10"></div>
+        <div class="bar11"></div>
+        <div class="bar12"></div>
     </div>
-    <!-- Text at the bottom center -->
-    <div class="loading-text">
-      <i class="far fa-eye"></i> CRT warning
-    </div>
-  </div>
-
-  <!-- Main content section -->
-  <div id="main-content" class="crt">
-    <p class="my-jam">
-      <a href="https://steamcommunity.com/profiles/76561199396357317/">
-        <img src="https://files.catbox.moe/tzu0cq.gif" alt="Steam">
-      </a>
-    </p>
-
-    <p class="playlist">
-      <a href="https://open.spotify.com/user/31gms4uvuxayraivbxo4tttpasmm?si=d933ebaee5804c26">
-        <img src="https://files.catbox.moe/oactbg.gif" alt=".Wav">
-      </a>
-    </p>
-
-    <p class="rotate-continuous">
-      <a href="https://trackerhub.cx/sh/1cZ271215_x00jygu0pVOhDhbwUxVF_hxaJU8PGgruRE">
-        <img src="https://files.catbox.moe/4brpcf.gif" alt="Playlist Image">
-      </a>
-    </p>
-  </div>
 </body>
-
 </html>
