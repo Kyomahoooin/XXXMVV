@@ -8,12 +8,12 @@
         /* Define custom font using @font-face */
         @font-face {
             font-family: 'VCR';
-            src: url('fonts/yeezy_tstar-bold.ttf') /* Percorso del file font */
+            src: url('fonts/yeezy_tstar-bold.ttf'); /* Verifica il percorso corretto del font */
         }
 
         @font-face {
             font-family: 'VCR1';
-            src: url('fonts/yeezy_tstar-light.ttf') /* Percorso del file font */
+            src: url('fonts/yeezy_tstar-light.ttf'); /* Verifica il percorso corretto del font */
         }
 
         * {
@@ -30,7 +30,7 @@
             align-items: center;
             height: 100vh;
             width: 100%;
-            overflow: hidden;
+            overflow: hidden; /* Questo può nascondere contenuti fuori schermo, considera di modificarlo */
             pointer-events: none;
             flex-direction: column;
             text-align: center;
@@ -82,13 +82,13 @@
         .spinner .bar11 { transform: rotate(300deg) translate(0, -130%); animation-delay: -0.167s; }
         .spinner .bar12 { transform: rotate(330deg) translate(0, -130%); animation-delay: -0.0833s; }
 
-        /* New styles for the hidden section */
+        /* Sezione nascosta inizialmente */
         .hidden-section {
             display: none;
             text-align: center;
             font-size: 24px;
             color: #20201E;
-            font-family: 'VCR'; /* Use custom font */
+            font-family: 'VCR';
         }
 
         .date {
@@ -96,42 +96,40 @@
             color: #20201E;
         }
 
-        /* New styles for the image list positioned in the top-left corner */
+        /* Lista di immagini posizionata in alto a sinistra */
         .image-list {
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
-            display: flex; /* Align images in a row */
-            gap: 50px; /* Spaziatura tra le immagini */
-            padding-left: 50px; /* Spaziatura tra il bordo sinistro e le immagini */
+            display: flex;
+            gap: 50px;
+            padding-left: 50px;
             margin-top: 50px;
-            display: none; /* Initially hidden */
+            display: none; /* Nascosta inizialmente */
         }
 
-        /* Contenitore quadrato per ogni immagine */
         .image-container {
             display: flex;
-            flex-direction: column; /* Posiziona l'immagine sopra la caption */
-            justify-content: center; /* Allinea verticalmente il contenuto */
-            align-items: center; /* Centra orizzontalmente il contenuto */
-            width: 150px; /* Impostare una larghezza fissa */
-            height: 150px; /* Impostare un'altezza fissa */
-            overflow: hidden; /* Nascondere eventuale overflow */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
         }
 
-        /* Stili per le immagini quadrate */
         .image-list img {
-            width: 100%; /* Le immagini riempiono tutta la larghezza del contenitore */
-            height: 100%; /* Le immagini riempiono tutta l'altezza del contenitore */
-            object-fit: contain; /* Adatta l'immagine mantenendo il suo rapporto d'aspetto */
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
         }
 
-        /* Apply custom font to the captions */
         .caption {
-            font-family: 'VCR1'; /* Use custom font for captions */
+            margin-top: 10px;
+            font-family: 'VCR1';
             font-size: 14px;
             color: #20201E;
-            margin-top: 10px; /* Distanza tra l'immagine e la didascalia */
+            text-align: center;
         }
     </style>
 </head>
@@ -155,23 +153,24 @@
         <div id="lucaDante" style="display:none;">Luca Dante</div>
     </div>
 
-    <!-- New Section for Image List -->
     <div class="image-list" id="imageList">
         <div class="image-container">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Photo_of_a_kitten.jpg/800px-Photo_of_a_kitten.jpg" alt="Image 1">
             <div class="caption">img-001</div>
         </div>
+        <div class="image-container">
+            <img src="https://via.placeholder.com/150" alt="Image 2">
+            <div class="caption">Caption for Image 2</div>
+        </div>
     </div>
 
     <script>
-        // JavaScript to hide the spinner and show the section
         setTimeout(() => {
             document.querySelector('.spinner').style.display = 'none';
             document.querySelector('.hidden-section').style.display = 'block';
-            document.body.style.pointerEvents = 'auto'; // Re-enable pointer events
+            document.body.style.pointerEvents = 'auto';
 
-            // Get the user's language and display the date in that locale
-            const userLang = navigator.language || navigator.userLanguage; // Detect the user's language
+            const userLang = navigator.language || navigator.userLanguage;
             const currentDate = new Date().toLocaleDateString(userLang, {
                 weekday: 'long',
                 year: 'numeric',
@@ -179,21 +178,18 @@
                 day: 'numeric'
             });
 
-            // Display the current date
             document.getElementById('date').textContent = currentDate;
 
-            // Hide the date after 1 second and show the "Luca Dante" text
             setTimeout(() => {
-                document.getElementById('date').style.display = 'none'; // Hide the date
-                document.getElementById('lucaDante').style.display = 'block'; // Show the "Luca Dante" text
-            }, 1500); // Wait for 1 second before hiding the date
+                document.getElementById('date').style.display = 'none';
+                document.getElementById('lucaDante').style.display = 'block';
+            }, 1500);
 
-            // After 2 seconds, hide the "CHIOMAOIN.IT" text and show the image list
             setTimeout(() => {
-                document.getElementById('lucaDante').style.display = 'none'; // Hide "CHIOMAOIN.IT"
-                document.getElementById('imageList').style.display = 'flex'; // Show the image list
-            }, 3000); // Wait 2 seconds before switching to the image list
-        }, 1500); // Wait 2 seconds before starting the transition
+                document.getElementById('lucaDante').style.display = 'none';
+                document.getElementById('imageList').style.display = 'flex';
+            }, 3000);
+        }, 1500);
     </script>
 </body>
 </html>
