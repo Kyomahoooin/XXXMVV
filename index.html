@@ -8,7 +8,12 @@
         /* Define custom font using @font-face */
         @font-face {
             font-family: 'VCR';
-            src: url('fonts/VCR.ttf')
+            src: url('fonts/yeezy_tstar-bold.ttf') /* Percorso del file font */
+        }
+
+        @font-face {
+            font-family: 'VCR1';
+            src: url('fonts/yeezy_tstar-light.ttf') /* Percorso del file font */
         }
 
         * {
@@ -27,6 +32,8 @@
             width: 100%;
             overflow: hidden;
             pointer-events: none;
+            flex-direction: column;
+            text-align: center;
         }
 
         .spinner {
@@ -88,6 +95,44 @@
             font-size: 20px;
             color: #20201E;
         }
+
+        /* New styles for the image list positioned in the top-left corner */
+        .image-list {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex; /* Align images in a row */
+            gap: 50px; /* Spaziatura tra le immagini */
+            padding-left: 50px; /* Spaziatura tra il bordo sinistro e le immagini */
+            margin-top: 50px;
+            display: none; /* Initially hidden */
+        }
+
+        /* Contenitore quadrato per ogni immagine */
+        .image-container {
+            display: flex;
+            flex-direction: column; /* Posiziona l'immagine sopra la caption */
+            justify-content: center; /* Allinea verticalmente il contenuto */
+            align-items: center; /* Centra orizzontalmente il contenuto */
+            width: 200px; /* Impostare una larghezza fissa */
+            height: 200px; /* Impostare un'altezza fissa */
+            overflow: hidden; /* Nascondere eventuale overflow */
+        }
+
+        /* Stili per le immagini quadrate */
+        .image-list img {
+            width: 100%; /* Le immagini riempiono tutta la larghezza del contenitore */
+            height: 100%; /* Le immagini riempiono tutta l'altezza del contenitore */
+            object-fit: cover; /* Adatta l'immagine mantenendo il suo rapporto d'aspetto */
+        }
+
+        /* Apply custom font to the captions */
+        .caption {
+            font-family: 'VCR1'; /* Use custom font for captions */
+            font-size: 14px;
+            color: #20201E;
+            margin-top: 10px; /* Distanza tra l'immagine e la didascalia */
+        }
     </style>
 </head>
 <body>
@@ -107,7 +152,15 @@
     </div>
     <div class="hidden-section">
         <div class="date" id="date"></div>
-        <div id="lucaDante" style="display:none;">CHIOMAOIN.IT</div>
+        <div id="lucaDante" style="display:none;">Luca Dante</div>
+    </div>
+
+    <!-- New Section for Image List -->
+    <div class="image-list" id="imageList">
+        <div class="image-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Photo_of_a_kitten.jpg/800px-Photo_of_a_kitten.jpg" alt="Image 1">
+            <div class="caption">img-001</div>
+        </div>
     </div>
 
     <script>
@@ -135,6 +188,11 @@
                 document.getElementById('lucaDante').style.display = 'block'; // Show the "Luca Dante" text
             }, 1500); // Wait for 1 second before hiding the date
 
+            // After 2 seconds, hide the "CHIOMAOIN.IT" text and show the image list
+            setTimeout(() => {
+                document.getElementById('lucaDante').style.display = 'none'; // Hide "CHIOMAOIN.IT"
+                document.getElementById('imageList').style.display = 'flex'; // Show the image list
+            }, 3000); // Wait 2 seconds before switching to the image list
         }, 1500); // Wait 2 seconds before starting the transition
     </script>
 </body>
