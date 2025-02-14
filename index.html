@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiomaoin.it</title>
+    <title>Sito con Spinner</title>
     <style>
+        /* Define custom font using @font-face */
+        @font-face {
+            font-family: 'VCR';
+            src: url('fonts/VCR.ttf')
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,15 +18,15 @@
         }
 
         body {
-            background-color: white;
+            background-color: #EDEDE3;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             width: 100%;
-            overflow: hidden; /* Impedisce lo scroll */
-            pointer-events: none; /* Disabilita tutti gli eventi di interazione sul corpo */
+            overflow: hidden;
+            pointer-events: none;
         }
 
         .spinner {
@@ -28,16 +34,16 @@
             width: 54px;
             height: 54px;
             display: inline-block;
-            background: white; /* Sfondo dello spinner bianco */
+            background: #EDEDE3;
             padding: 10px;
             border-radius: 10px;
-            pointer-events: none; /* Disabilita interazione anche con lo spinner */
+            pointer-events: none;
         }
 
         .spinner div {
             width: 6%;
             height: 16%;
-            background: black; /* Colore delle barre (nero) */
+            background: #20201E;
             position: absolute;
             left: 49%;
             top: 43%;
@@ -56,64 +62,31 @@
             }
         }
 
-        .spinner .bar1 {
-            transform: rotate(0deg) translate(0, -130%);
-            animation-delay: 0s;
+        .spinner .bar1 { transform: rotate(0deg) translate(0, -130%); animation-delay: 0s; }
+        .spinner .bar2 { transform: rotate(30deg) translate(0, -130%); animation-delay: -0.9167s; }
+        .spinner .bar3 { transform: rotate(60deg) translate(0, -130%); animation-delay: -0.833s; }
+        .spinner .bar4 { transform: rotate(90deg) translate(0, -130%); animation-delay: -0.7497s; }
+        .spinner .bar5 { transform: rotate(120deg) translate(0, -130%); animation-delay: -0.667s; }
+        .spinner .bar6 { transform: rotate(150deg) translate(0, -130%); animation-delay: -0.5837s; }
+        .spinner .bar7 { transform: rotate(180deg) translate(0, -130%); animation-delay: -0.5s; }
+        .spinner .bar8 { transform: rotate(210deg) translate(0, -130%); animation-delay: -0.4167s; }
+        .spinner .bar9 { transform: rotate(240deg) translate(0, -130%); animation-delay: -0.333s; }
+        .spinner .bar10 { transform: rotate(270deg) translate(0, -130%); animation-delay: -0.2497s; }
+        .spinner .bar11 { transform: rotate(300deg) translate(0, -130%); animation-delay: -0.167s; }
+        .spinner .bar12 { transform: rotate(330deg) translate(0, -130%); animation-delay: -0.0833s; }
+
+        /* New styles for the hidden section */
+        .hidden-section {
+            display: none;
+            text-align: center;
+            font-size: 24px;
+            color: #20201E;
+            font-family: 'VCR'; /* Use custom font */
         }
 
-        .spinner .bar2 {
-            transform: rotate(30deg) translate(0, -130%);
-            animation-delay: -0.9167s;
-        }
-
-        .spinner .bar3 {
-            transform: rotate(60deg) translate(0, -130%);
-            animation-delay: -0.833s;
-        }
-
-        .spinner .bar4 {
-            transform: rotate(90deg) translate(0, -130%);
-            animation-delay: -0.7497s;
-        }
-
-        .spinner .bar5 {
-            transform: rotate(120deg) translate(0, -130%);
-            animation-delay: -0.667s;
-        }
-
-        .spinner .bar6 {
-            transform: rotate(150deg) translate(0, -130%);
-            animation-delay: -0.5837s;
-        }
-
-        .spinner .bar7 {
-            transform: rotate(180deg) translate(0, -130%);
-            animation-delay: -0.5s;
-        }
-
-        .spinner .bar8 {
-            transform: rotate(210deg) translate(0, -130%);
-            animation-delay: -0.4167s;
-        }
-
-        .spinner .bar9 {
-            transform: rotate(240deg) translate(0, -130%);
-            animation-delay: -0.333s;
-        }
-
-        .spinner .bar10 {
-            transform: rotate(270deg) translate(0, -130%);
-            animation-delay: -0.2497s;
-        }
-
-        .spinner .bar11 {
-            transform: rotate(300deg) translate(0, -130%);
-            animation-delay: -0.167s;
-        }
-
-        .spinner .bar12 {
-            transform: rotate(330deg) translate(0, -130%);
-            animation-delay: -0.0833s;
+        .date {
+            font-size: 20px;
+            color: #20201E;
         }
     </style>
 </head>
@@ -132,5 +105,37 @@
         <div class="bar11"></div>
         <div class="bar12"></div>
     </div>
+    <div class="hidden-section">
+        <div class="date" id="date"></div>
+        <div id="lucaDante" style="display:none;">LUCA DANTE</div>
+    </div>
+
+    <script>
+        // JavaScript to hide the spinner and show the section
+        setTimeout(() => {
+            document.querySelector('.spinner').style.display = 'none';
+            document.querySelector('.hidden-section').style.display = 'block';
+            document.body.style.pointerEvents = 'auto'; // Re-enable pointer events
+
+            // Get the user's language and display the date in that locale
+            const userLang = navigator.language || navigator.userLanguage; // Detect the user's language
+            const currentDate = new Date().toLocaleDateString(userLang, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Display the current date
+            document.getElementById('date').textContent = currentDate;
+
+            // Hide the date after 1 second and show the "Luca Dante" text
+            setTimeout(() => {
+                document.getElementById('date').style.display = 'none'; // Hide the date
+                document.getElementById('lucaDante').style.display = 'block'; // Show the "Luca Dante" text
+            }, 1000); // Wait for 1 second before hiding the date
+
+        }, 1000); // Wait 2 seconds before starting the transition
+    </script>
 </body>
 </html>
