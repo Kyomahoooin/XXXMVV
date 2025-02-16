@@ -17,7 +17,8 @@
         html, body {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Disabilita lo scrolling */
+            overflow: hidden; /* Disabilita lo scrolling verticale */
+            overflow-x: hidden; /* Disabilita lo scrolling orizzontale */
             height: 100vh;
             width: 100vw;
         }
@@ -29,85 +30,145 @@
             justify-content: center;
             align-items: center;
             font-family: 'z', sans-serif;
-            font-size: 2.2em; /* Aumentato da 2em a 2.2em */
+            font-size: 2.2em;
         }
 
         /* Stile per il contenuto */
         #contenuto {
             color: #211f1f;
-            text-align: center; /* Centra il testo orizzontalmente */
+            text-align: center;
             display: flex;
-            flex-direction: column; /* Allinea il contenuto in colonna */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 0;
             padding: 0;
-            opacity: 1; /* Inizialmente visibile */
-            transition: opacity 0.5s ease-in-out; /* Animazione per la scomparsa */
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
         }
 
         /* Stile per l'immagine del cuore */
         .heart-img {
-            height: 1em; /* Altezza uguale a quella del testo */
-            width: 1em; /* Larghezza uguale a quella del testo */
-            vertical-align: middle; /* Allinea l'immagine con il testo */
+            height: 1em;
+            width: 1em;
+            vertical-align: middle;
         }
 
         /* Stile per la scritta "Luca Dante" */
         .sottoscritto {
-            font-size: 0.7em; /* Aumentato da 0.6em a 0.7em */
-            margin-top: 0.5em; /* Spazio sopra la scritta */
-            color: #211f1f; /* Colore del testo */
-            opacity: 0; /* Inizialmente invisibile */
-            transition: opacity 0.5s ease-in-out; /* Animazione per la comparsa */
+            font-size: 0.7em;
+            margin-top: 0.5em;
+            color: #211f1f;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Contenitore per l'immagine e la didascalia */
+        .image-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Contenitore per l'immagine e il video */
+        .image-video-container {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Stile per l'immagine */
+        .top-image {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            object-fit: cover;
+        }
+
+        /* Stile per il video incorporato */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+        }
+
+        /* Stile per la didascalia sotto l'immagine */
+        .didascalia {
+            font-size: 0.5em;
+            color: #211f1f;
+            margin-top: 10px;
+            text-align: center;
         }
 
         /* Media query per dispositivi mobili */
         @media (max-width: 767px) {
             body {
-                font-size: 1.7em; /* Aumentato da 1.5em a 1.7em per dispositivi mobili */
+                font-size: 1.7em;
             }
         }
     </style>
 </head>
 <body>
     <div id="contenuto"></div>
+    <!-- Contenitore per l'immagine e la didascalia -->
+    <div class="image-container">
+        <div class="image-video-container">
+            <img src="https://files.catbox.moe/hz1mrp.PNG" class="top-image" alt="Immagine in alto">
+            <!-- Video incorporato -->
+            <video class="video-overlay" loop playsinline>
+                <source src="https://files.catbox.moe/1mtnxl.mp4" type="video/mp4">
+                Il tuo browser non supporta il tag video.
+            </video>
+        </div>
+        <div class="didascalia">Mschf</div>
+    </div>
 
     <script>
-        // Funzione per calcolare la data secondo il calendario rivoluzionario
+        let isCentered = false;
+
+        function traduciAnno() {
+            const lingua = navigator.language || navigator.userLanguage;
+            const traduzioni = {
+                'it': 'Anno',
+                'en': 'Year',
+                'fr': 'Année',
+                'es': 'Año',
+                'de': 'Jahr',
+            };
+            return traduzioni[lingua.split('-')[0]] || 'Anno';
+        }
+
         function calendarioRivoluzionario() {
             const mesi = [
                 'Vendémiaire', 'Brumaire', 'Frimaire', 'Nivôse', 'Pluviôse', 'Ventôse',
                 'Germinal', 'Floréal', 'Prairial', 'Messidor', 'Thermidor', 'Fructidor'
             ];
-
             const data = new Date();
-            const inizioAnnoRivoluzionario = new Date(1792, 8, 22); // 22 settembre 1792
-
-            // Calcola la differenza in giorni tra oggi e l'inizio dell'anno rivoluzionario
+            const inizioAnnoRivoluzionario = new Date(1792, 8, 22);
             const giorniDalInizio = Math.floor((data - inizioAnnoRivoluzionario) / (1000 * 60 * 60 * 24));
-
-            // Calcola l'anno rivoluzionario
             const annoRivoluzionario = Math.floor(giorniDalInizio / 365) + 1;
-
-            // Calcola il giorno dell'anno
             const giornoAnno = giorniDalInizio % 365;
-
-            // Calcola il mese e il giorno all'interno del mese
-            const mese = mesi[Math.floor(giornoAnno / 30)]; // Ogni mese ha 30 giorni
+            const mese = mesi[Math.floor(giornoAnno / 30)];
             const giornoDelMese = (giornoAnno % 30) + 1;
-
-            return `Anno ${annoRivoluzionario} - ${mese} ${giornoDelMese}`;
+            return `${traduciAnno()} ${annoRivoluzionario} - ${mese} ${giornoDelMese}`;
         }
 
-        // Funzione per cambiare il contenuto
         function cambiaContenuto() {
             const contenuto = document.getElementById('contenuto');
-
-            // Mostra la data rivoluzionaria
             contenuto.textContent = calendarioRivoluzionario();
 
-            // Dopo 2 secondi, sostituisci la data con "Made with ❤️"
             setTimeout(() => {
                 contenuto.innerHTML = `
                     <div>
@@ -116,20 +177,49 @@
                     <div class="sottoscritto">Luca Dante</div>
                 `;
 
-                // Dopo 1.5 secondi (1500 millisecondi), mostra la scritta "Luca Dante"
                 setTimeout(() => {
-                    const sottoscritto = document.querySelector('.sottoscritto');
-                    sottoscritto.style.opacity = 1; // Rendi visibile la scritta
-                }, 1500); // 1500 millisecondi = 1.5 secondi
+                    document.querySelector('.sottoscritto').style.opacity = 1;
+                }, 1500);
 
-                // Dopo altri 2 secondi (2000 millisecondi), nascondi tutto
                 setTimeout(() => {
-                    contenuto.style.opacity = 0; // Nascondi il contenuto
-                }, 3500); // 2000 + 1500 = 3500 millisecondi (3.5 secondi totali)
-            }, 2000); // 2000 millisecondi = 2 secondi
+                    contenuto.style.opacity = 0;
+                    setTimeout(() => {
+                        document.querySelector('.image-container').style.opacity = 1;
+                    }, 500);
+                }, 3500);
+            }, 2000);
         }
 
-        // Esegui la funzione al caricamento della pagina
+        function handleImageClick() {
+            const imageContainer = document.querySelector('.image-container');
+            const imageVideoContainer = document.querySelector('.image-video-container');
+            const videoOverlay = document.querySelector('.video-overlay');
+
+            if (isCentered) {
+                imageContainer.style.top = '30px';
+                imageContainer.style.left = '30px';
+                imageContainer.style.transform = 'translate(0, 0)';
+                imageVideoContainer.style.width = '90px';
+                imageVideoContainer.style.height = '90px';
+                videoOverlay.style.opacity = 0;
+                videoOverlay.pause();
+                videoOverlay.currentTime = 0;
+            } else {
+                imageContainer.style.top = '50%';
+                imageContainer.style.left = '50%';
+                imageContainer.style.transform = 'translate(-50%, -50%)';
+                imageVideoContainer.style.width = '270px';
+                imageVideoContainer.style.height = '270px';
+                videoOverlay.currentTime = 0;
+                videoOverlay.play();
+                videoOverlay.style.opacity = 1;
+            }
+
+            isCentered = !isCentered;
+        }
+
+        document.querySelector('.top-image').addEventListener('click', handleImageClick);
+
         cambiaContenuto();
     </script>
 </body>
