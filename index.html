@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chiomaoin</title>
     <link rel="icon" href="https://files.catbox.moe/y52odo.png" type="image/x-icon">
     
@@ -10,7 +10,7 @@
     <style>
         @font-face {
             font-family: 'z';
-            src: url('https://files.catbox.moe/f3846t.woff2') format('woff2');
+            src: url('https://res.cloudinary.com/dfbo3wljq/raw/upload/v1739737054/yeezy_tstar-bold-webfont_1_gi4cr6.woff') format('woff2');
         }
 
         /* Reset di margini e padding */
@@ -19,8 +19,10 @@
             padding: 0;
             overflow: hidden; /* Disabilita lo scrolling verticale */
             overflow-x: hidden; /* Disabilita lo scrolling orizzontale */
-            height: 100vh;
-            width: 100vw;
+            width: 100%;
+            height: 100%;
+            position: fixed; /* Impedisce lo scrolling */
+            touch-action: manipulation; /* Disabilita il double-tap per zoomare */
         }
 
         /* Centra il contenuto verticalmente e orizzontalmente */
@@ -63,7 +65,7 @@
             transition: opacity 0.5s ease-in-out;
         }
 
-        /* Contenitore per l'immagine e la didascalia */
+        /* Contenitore per l'immagine e la caption */
         .image-container {
             position: absolute;
             top: 30px;
@@ -105,13 +107,13 @@
             pointer-events: none;
         }
 
-        /* Stile per la didascalia sotto l'immagine */
-        .didascalia {
+        /* Stile per la caption */
+        .caption {
             font-size: 0.5em;
             color: #211f1f;
             margin-top: 10px;
             text-align: center;
-            transition: transform 0.5s ease-in-out; /* Aggiungi transizione per la scala */
+            transition: opacity 0.5s ease-in-out;
         }
 
         /* Classe per centrare il contenitore e ingrandire */
@@ -121,9 +123,9 @@
             transform: translate(-50%, -50%) scale(3); /* Centra e ingrandisce del triplo */
         }
 
-        /* Rimpicciolisci la didascalia quando l'immagine è centrata */
-        .centered .didascalia {
-            transform: scale(0.5); /* Riduci la scala della didascalia */
+        /* Nascondi la caption quando l'immagine è centrata */
+        .centered .caption {
+            opacity: 0;
         }
 
         /* Media query per dispositivi mobili */
@@ -137,22 +139,45 @@
             body {
                 font-size: 1.7em; /* Regola la dimensione del font per dispositivi mobili */
             }
+
+            /* Aumenta leggermente la dimensione della caption su mobile */
+            .caption {
+                font-size: 0.6em; /* Aumenta da 0.5em a 0.6em */
+            }
         }
     </style>
+
+    <!-- Script per bloccare lo zoom su desktop -->
+    <script>
+        // Blocca lo zoom su desktop
+        document.addEventListener('wheel', function (event) {
+            if (event.ctrlKey) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Blocca lo zoom tramite Ctrl + + o Ctrl + -
+        document.addEventListener('keydown', function (event) {
+            if (event.ctrlKey && (event.key === '+' || event.key === '-' || event.key === '=')) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="contenuto"></div>
-    <!-- Contenitore per l'immagine e la didascalia -->
+    <!-- Contenitore per l'immagine e la caption -->
     <div class="image-container">
         <div class="image-video-container">
-            <img src="https://files.catbox.moe/hz1mrp.PNG" class="top-image" alt="Immagine in alto">
+            <img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1739738447/Cattura_ofkepy.png" class="top-image" alt="Immagine in alto">
             <!-- Video incorporato -->
             <video class="video-overlay" loop playsinline>
-                <source src="https://files.catbox.moe/1mtnxl.mp4" type="video/mp4">
+                <source src="https://res.cloudinary.com/dfbo3wljq/video/upload/v1739738496/AQNdz9k9rNUIi4VSGPR99-FyjJ4TGh6cncTmVhYUeIdsrme9PPhzBBOmNA2MmWF88HDYpZnQpsqzISuXlMblCJOt3I2A36NY9suUjrw_mwkb8f.mp4" type="video/mp4">
                 Il tuo browser non supporta il tag video.
             </video>
         </div>
-        <div class="didascalia">Mschf</div>
+        <!-- Caption visibile solo prima del clic -->
+        <div class="caption">Mschf</div>
     </div>
 
     <script>
@@ -192,7 +217,7 @@
             setTimeout(() => {
                 contenuto.innerHTML = `
                     <div>
-                        Made&nbsp;with&nbsp;<img src="https://files.catbox.moe/1n873l.png" class="heart-img" alt="❤️">
+                        Made&nbsp;with&nbsp;<img src="https://res.cloudinary.com/dfbo3wljq/image/upload/v1739743605/Squish-ezgif.com-webp-to-gif-converter_re7ph6.gif" class="heart-img" alt="❤️">
                     </div>
                     <div class="sottoscritto">Luca Dante</div>
                 `;
