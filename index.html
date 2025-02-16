@@ -89,6 +89,7 @@
             height: 100%;
             cursor: pointer;
             object-fit: cover;
+            transition: transform 0.5s ease-in-out;
         }
 
         /* Stile per il video incorporato */
@@ -100,7 +101,7 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             pointer-events: none;
         }
 
@@ -110,12 +111,31 @@
             color: #211f1f;
             margin-top: 10px;
             text-align: center;
+            transition: transform 0.5s ease-in-out; /* Aggiungi transizione per la scala */
+        }
+
+        /* Classe per centrare il contenitore e ingrandire */
+        .centered {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(3); /* Centra e ingrandisce del triplo */
+        }
+
+        /* Rimpicciolisci la didascalia quando l'immagine è centrata */
+        .centered .didascalia {
+            transform: scale(0.5); /* Riduci la scala della didascalia */
         }
 
         /* Media query per dispositivi mobili */
         @media (max-width: 767px) {
+            html, body {
+                overflow-x: hidden; /* Disabilita lo scorrimento orizzontale */
+                width: 100%; /* Assicura che il corpo occupi tutta la larghezza dello schermo */
+                position: relative; /* Imposta la posizione relativa per evitare problemi di layout */
+            }
+
             body {
-                font-size: 1.7em;
+                font-size: 1.7em; /* Regola la dimensione del font per dispositivi mobili */
             }
         }
     </style>
@@ -192,24 +212,16 @@
 
         function handleImageClick() {
             const imageContainer = document.querySelector('.image-container');
-            const imageVideoContainer = document.querySelector('.image-video-container');
             const videoOverlay = document.querySelector('.video-overlay');
 
             if (isCentered) {
-                imageContainer.style.top = '30px';
-                imageContainer.style.left = '30px';
-                imageContainer.style.transform = 'translate(0, 0)';
-                imageVideoContainer.style.width = '90px';
-                imageVideoContainer.style.height = '90px';
+                imageContainer.classList.remove('centered');
                 videoOverlay.style.opacity = 0;
                 videoOverlay.pause();
                 videoOverlay.currentTime = 0;
             } else {
-                imageContainer.style.top = '50%';
-                imageContainer.style.left = '50%';
-                imageContainer.style.transform = 'translate(-50%, -50%)';
-                imageVideoContainer.style.width = '270px';
-                imageVideoContainer.style.height = '270px';
+                imageContainer.classList.add('centered');
+                videoOverlay.volume = 0.2; // Imposta il volume al 20%
                 videoOverlay.currentTime = 0;
                 videoOverlay.play();
                 videoOverlay.style.opacity = 1;
