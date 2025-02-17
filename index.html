@@ -123,9 +123,11 @@
             transform: translate(-50%, -50%) scale(3); /* Centra e ingrandisce del triplo */
         }
 
-        /* Nascondi la caption quando l'immagine è centrata */
+        /* Mantieni la caption visibile e invariata di dimensioni */
         .centered .caption {
-            opacity: 0;
+            opacity: 1;
+            font-size: 0.5em;
+            transform: none;
         }
 
         /* Media query per dispositivi mobili */
@@ -176,8 +178,8 @@
                 Il tuo browser non supporta il tag video.
             </video>
         </div>
-        <!-- Caption visibile solo prima del clic -->
-        <div class="caption">Mschf</div>
+        <!-- Caption visibile sia prima che dopo il clic -->
+        <div class="caption">w3ird</div>
     </div>
 
     <script>
